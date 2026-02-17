@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "425476122959",
+    "project_id": "driverguard-fa8d3",
+    "storage_bucket": "driverguard-fa8d3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425476122959:android:36fb148b904aad7942fd3a",
+        "android_client_info": {
+          "package_name": "com.COEN390.driverguard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3H75mHT_w5UMy-45LkOgsschjMfqihog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
