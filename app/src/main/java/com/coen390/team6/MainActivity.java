@@ -1,6 +1,8 @@
 package com.coen390.team6;
 
 import android.os.Bundle;
+import android.widget.TextView;
+import android.graphics.Color;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
 
     private TextView heartrateText, fatigueText, bluetoothText, batteryText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,5 +42,6 @@ public class MainActivity extends AppCompatActivity {
         fatigueText.setText(toString(R.string.fatigue_value));
         bluetoothText.setText(toString(R.string.bluetooth_value));
         batteryText.setText(toString(R.string.battery_value));
+        fatigueText.setTextColor(Color.parseColor("#4CAF50"));
     }
 }
