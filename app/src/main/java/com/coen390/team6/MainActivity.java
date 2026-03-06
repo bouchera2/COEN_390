@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView heartrateText, fatigueText, bluetoothText, batteryText;
+    private TextView heartRateText, fatigueText, bluetoothText, batteryText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,17 +31,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void bindViews() {
-        heartrateText = findViewById(R.id.heartrateText);
+        heartRateText = findViewById(R.id.heartRateText);
         fatigueText = findViewById(R.id.fatigueText);
         bluetoothText = findViewById(R.id.bluetoothText);
         batteryText = findViewById(R.id.batteryText);
     }
 
     public void bindData() {
-        heartrateText.setText(toString(R.string.heartrate_value));
-        fatigueText.setText(toString(R.string.fatigue_value));
-        bluetoothText.setText(toString(R.string.bluetooth_value));
-        batteryText.setText(toString(R.string.battery_value));
+        heartRateText.setText(getString(R.string.heartrate_value_placeholder));
+        fatigueText.setText(getString(R.string.fatigue_value_placeholder));
+        bluetoothText.setText(getString(R.string.bt_status_placeholder));
+        batteryText.setText(getString(R.string.battery_value_placeholder));
         fatigueText.setTextColor(Color.parseColor("#4CAF50"));
     }
 }

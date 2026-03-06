@@ -7,8 +7,8 @@
     <string name="label_bluetooth">Bluetooth</string>
     <string name="label_battery">Battery</string>
     <string name="status_verified">Verified</string>
-    <string name="placeholder_hr_value">72 bpm</string>
-    <string name="placeholder_fatigue_low">Low</string>
-    <string name="placeholder_bt_connected">Connected</string>
-    <string name="placeholder_battery_85">85%%</string>
+    <string name="heartrate_value_placeholder">72 bpm</string>
+    <string name="fatigue_value_placeholder">Low</string>
+    <string name="bt_status_placeholder">Connected</string>
+    <string name="battery_value_placeholder">85%%</string>
 </resources>

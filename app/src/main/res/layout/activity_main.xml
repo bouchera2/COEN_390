@@ -56,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/placeholder_hr_value"
+                    android:text="@string/heartrate_value_placeholder"
                     android:textColor="#FFFFFF"
                     android:textSize="56sp"
                     android:textStyle="bold" />
@@ -88,7 +88,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@string/placeholder_fatigue_low"
+                    android:text="@string/fatigue_value_placeholder"
                     android:textColor="#4CAF50"
                     android:textSize="56sp"
                     android:textStyle="bold" />
@@ -127,7 +127,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:text="@string/placeholder_bt_connected"
+                        android:text="@string/bt_status_placeholder"
                         android:textColor="#CFD8DC"
                         android:textSize="13sp"
                         android:textStyle="bold" />
@@ -166,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:text="@string/placeholder_battery_85"
+                        android:text="@string/battery_value_placeholder"
                         android:textColor="#CFD8DC"
                         android:textSize="13sp"
                         android:textStyle="bold" />
