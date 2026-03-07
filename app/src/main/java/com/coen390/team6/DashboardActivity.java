@@ -10,7 +10,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity {
 
     private TextView heartRateText, fatigueText, bluetoothText, batteryText;
 
@@ -18,9 +18,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_dashboard);
 
-        bindViews();
+        bindText();
         bindData();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void bindViews() {
+    public void bindText() {
         heartRateText = findViewById(R.id.heartRateText);
         fatigueText = findViewById(R.id.fatigueText);
         bluetoothText = findViewById(R.id.bluetoothText);
