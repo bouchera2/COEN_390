@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="32dp"
+    android:background="#1A1A2E">
+
+    <!-- App Logo / Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DriverGuard"
+        android:textSize="32sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stay alert. Stay safe."
+        android:textSize="16sp"
+        android:textColor="#AAAAAA"
+        android:layout_marginBottom="48dp"/>
+
+    <!-- Email Field -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Email"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:textColor="#FFFFFF"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Password Field -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:hint="Password"
+        app:passwordToggleEnabled="true"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="#FFFFFF"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Login Button -->
+    <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Log In"
+        android:textSize="16sp"
+        android:backgroundTint="#4CAF50"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Sign Up Button -->
+    <Button
+        android:id="@+id/buttonSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Create Account"
+        android:textSize="16sp"
+        android:backgroundTint="#2196F3"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Divider -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#555555"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  OR  "
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#555555"/>
+    </LinearLayout>
+
+    <!-- Google Sign-In Button -->
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/buttonGoogleSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- Progress Bar (hidden by default) -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"/>
+
+</LinearLayout>
