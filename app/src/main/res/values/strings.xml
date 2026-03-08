@@ -11,4 +11,5 @@
     <string name="fatigue_value_placeholder">Low</string>
     <string name="bt_status_placeholder">Connected</string>
     <string name="battery_value_placeholder">85%%</string>
+    <string name="default_web_client_id">425476122959-daj6j66vm2ftbmdk38740ndg6dv7pt0m.apps.googleusercontent.com</string>
 </resources>
