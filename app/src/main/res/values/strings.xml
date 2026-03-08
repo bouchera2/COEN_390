@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">COEN390_project</string>
+    <string name="dashboard_title">Driver Dashboard</string>
+    <string name="driver_name">John Doe</string>
+    <string name="label_heart_rate">Heart Rate</string>
+    <string name="label_fatigue">Fatigue Risk</string>
+    <string name="label_bluetooth">Bluetooth</string>
+    <string name="label_battery">Battery</string>
+    <string name="status_verified">Verified</string>
+    <string name="heartrate_value_placeholder">72 bpm</string>
+    <string name="fatigue_value_placeholder">Low</string>
+    <string name="bt_status_placeholder">Connected</string>
+    <string name="battery_value_placeholder">85%%</string>
 </resources>
