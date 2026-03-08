@@ -86,10 +86,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        // If user is already logged in, go straight to Dashboard
+        // If user is already logged in, go straight to MainActivity
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            goToDashboard();
+            goToMain();
         }
     }
 
@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                     showLoading(false);
                     if (task.isSuccessful()) {
                         Log.d(TAG, "signInWithEmail: success");
-                        goToDashboard();
+                        goToMain();
                     } else {
                         Log.w(TAG, "signInWithEmail: failure", task.getException());
                         Toast.makeText(LoginActivity.this,
@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (user != null) {
                             createDriverProfile(user);
                         }
-                        goToDashboard();
+                        goToMain();
                     } else {
                         Log.w(TAG, "createUserWithEmail: failure", task.getException());
                         Toast.makeText(LoginActivity.this,
@@ -214,7 +214,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (user != null && task.getResult().getAdditionalUserInfo().isNewUser()) {
                             createDriverProfile(user);
                         }
-                        goToDashboard();
+                        goToMain();
                     } else {
                         Log.w(TAG, "signInWithCredential: failure", task.getException());
                         Toast.makeText(LoginActivity.this,
@@ -267,9 +267,8 @@ public class LoginActivity extends AppCompatActivity {
     // HELPERS
     // ==========================================
 
-    private void goToDashboard() {
-        // Change DashboardActivity to whatever your main activity is called
-        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+    private void goToMain() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
