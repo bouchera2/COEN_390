@@ -25,7 +25,6 @@
         android:theme="@style/Theme.COEN390_project">
 
         <activity
-            android:name=".DashboardActivity"
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>

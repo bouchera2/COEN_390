@@ -19,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,12 +46,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
          setContentView(R.layout.activity_main);
          Button btnDashboard = findViewById(R.id.btn_dashboard);
+         Button btnDisconnect = findViewById(R.id.btn_disconnect);
         btnDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
                 startActivity(intent);
             }
+        });
+        btnDisconnect.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         });
 
         btnScanConnect = findViewById(R.id.btnScan);
