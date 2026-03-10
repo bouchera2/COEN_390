@@ -10,9 +10,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.appbar.MaterialToolbar;
+
 public class DashboardActivity extends AppCompatActivity {
 
     private TextView heartRateText, fatigueText, bluetoothText, batteryText;
+    private MaterialToolbar dashboardToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,11 @@ public class DashboardActivity extends AppCompatActivity {
 
         bindText();
         bindData();
+        setSupportActionBar(dashboardToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -35,6 +43,7 @@ public class DashboardActivity extends AppCompatActivity {
         fatigueText = findViewById(R.id.fatigueText);
         bluetoothText = findViewById(R.id.bluetoothText);
         batteryText = findViewById(R.id.batteryText);
+        dashboardToolbar = findViewById(R.id.dashboardToolbar);
     }
 
     public void bindData() {
@@ -43,5 +52,11 @@ public class DashboardActivity extends AppCompatActivity {
         bluetoothText.setText(getString(R.string.bt_status_placeholder));
         batteryText.setText(getString(R.string.battery_value_placeholder));
         fatigueText.setTextColor(Color.parseColor("#4CAF50"));
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="32dp"
-    android:background="#1A1A2E">
+    android:background="#1E2A33">
 
     <!-- App Logo / Title -->
     <TextView

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,10 +13,18 @@
         android:orientation="vertical"
         android:padding="20dp">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/dashboardToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#1E2A33"
+            app:navigationIconTint="#FFFFFF" />
+
         <TextView
             android:id="@+id/dashboardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="@string/dashboard_title"
             android:textColor="#FFFFFF"
             android:textSize="32sp"
