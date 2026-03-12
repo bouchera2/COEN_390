@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F6F8">
+    android:background="#101622">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,8 +15,8 @@
             android:id="@+id/dashboardToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#F6F6F8"
-            app:navigationIconTint="#1F2937" />
+            android:background="#101622"
+            app:navigationIconTint="#FFFFFF" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/fleetguard_title"
-                        android:textColor="#0F172A"
+                        android:textColor="#F8FAFC"
                         android:textSize="30sp"
                         android:textStyle="bold" />
 
@@ -59,7 +59,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:drawable/dialog_holo_light_frame"
-                        android:backgroundTint="#EAF9F0"
+                        android:backgroundTint="#113124"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:paddingStart="10dp"
@@ -93,7 +93,7 @@
                     android:layout_marginTop="20dp"
                     android:text="@string/safety_status"
                     android:textAllCaps="true"
-                    android:textColor="#64748B"
+                    android:textColor="#94A3B8"
                     android:textSize="11sp"
                     android:textStyle="bold" />
 
@@ -101,9 +101,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:backgroundTint="#EAF9F0"
+                    android:backgroundTint="#123026"
                     app:cardCornerRadius="16dp"
-                    app:strokeColor="#B7E4C7"
+                    app:strokeColor="#2E5A49"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -139,7 +139,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
                                     android:text="@string/fatigue_value_placeholder"
-                                    android:textColor="#1A1A1A"
+                                    android:textColor="#FFFFFF"
                                     android:textSize="34sp"
                                     android:textStyle="bold" />
 
@@ -148,7 +148,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="4dp"
                                     android:text="@string/optimal_condition"
-                                    android:textColor="#64748B"
+                                    android:textColor="#CBD5E1"
                                     android:textSize="12sp" />
                             </LinearLayout>
 
@@ -165,7 +165,7 @@
                                     app:indicatorColor="#22C55E"
                                     app:indicatorInset="0dp"
                                     app:indicatorSize="64dp"
-                                    app:trackColor="#DDE5EC"
+                                    app:trackColor="#2F3D47"
                                     app:trackThickness="8dp"
                                     android:progress="15" />
                             </LinearLayout>
@@ -193,9 +193,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="#192233"
                         app:cardCornerRadius="14dp"
-                        app:strokeColor="#E2E8F0"
+                        app:strokeColor="#2A344A"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
@@ -215,7 +215,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="@string/label_heart_rate"
-                                    android:textColor="#64748B"
+                                    android:textColor="#94A3B8"
                                     android:textSize="12sp" />
 
                                 <ImageView
@@ -232,7 +232,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:text="@string/heartrate_value_placeholder"
-                                android:textColor="#1A1A1A"
+                                android:textColor="#FFFFFF"
                                 android:textSize="28sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -243,9 +243,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="#192233"
                         app:cardCornerRadius="14dp"
-                        app:strokeColor="#E2E8F0"
+                        app:strokeColor="#2A344A"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
@@ -265,7 +265,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:text="@string/driving_time"
-                                    android:textColor="#64748B"
+                                    android:textColor="#94A3B8"
                                     android:textSize="12sp" />
 
                                 <ImageView
@@ -280,7 +280,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:text="@string/driving_time_value"
-                                android:textColor="#1A1A1A"
+                                android:textColor="#FFFFFF"
                                 android:textSize="28sp"
                                 android:textStyle="bold" />
 
@@ -308,9 +308,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="#192233"
                         app:cardCornerRadius="14dp"
-                        app:strokeColor="#E2E8F0"
+                        app:strokeColor="#2A344A"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
@@ -330,7 +330,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/label_battery"
-                                android:textColor="#64748B"
+                                android:textColor="#94A3B8"
                                 android:textSize="12sp" />
 
                             <ImageView
@@ -359,9 +359,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_weight="1"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="#192233"
                         app:cardCornerRadius="14dp"
-                        app:strokeColor="#E2E8F0"
+                        app:strokeColor="#2A344A"
                         app:strokeWidth="1dp">
 
                         <LinearLayout
@@ -381,7 +381,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="@string/last_rest"
-                                android:textColor="#64748B"
+                                android:textColor="#94A3B8"
                                 android:textSize="12sp" />
 
                             <ImageView
@@ -398,7 +398,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:text="@string/last_rest_value"
-                                android:textColor="#1A1A1A"
+                                android:textColor="#FFFFFF"
                                 android:textSize="28sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -411,7 +411,7 @@
                     android:layout_marginTop="18dp"
                     android:text="@string/active_route"
                     android:textAllCaps="true"
-                    android:textColor="#64748B"
+                    android:textColor="#94A3B8"
                     android:textSize="11sp"
                     android:textStyle="bold" />
 
@@ -419,9 +419,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
                     android:layout_marginTop="8dp"
-                    android:backgroundTint="#FFFFFF"
+                    android:backgroundTint="#192233"
                     app:cardCornerRadius="14dp"
-                    app:strokeColor="#E2E8F0"
+                    app:strokeColor="#2A344A"
                     app:strokeWidth="1dp">
 
                     <FrameLayout
@@ -469,7 +469,7 @@
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_gravity="bottom"
-        android:background="#FFFFFF"
+        android:background="#0F172A"
         android:paddingStart="6dp"
         android:paddingTop="8dp"
         android:paddingEnd="6dp"
