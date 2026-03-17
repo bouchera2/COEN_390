@@ -1,6 +1,8 @@
 package com.coen390.team6;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.graphics.Color;
 
@@ -16,6 +18,8 @@ public class DashboardActivity extends AppCompatActivity {
 
     private TextView heartRateText, fatigueText, bluetoothText, batteryText;
     private MaterialToolbar dashboardToolbar;
+    private View navDashboardItem;
+    private View navLogItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +29,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         bindText();
         bindData();
-        setSupportActionBar(dashboardToolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
+        bindNavigation();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -44,6 +44,8 @@ public class DashboardActivity extends AppCompatActivity {
         bluetoothText = findViewById(R.id.bluetoothText);
         batteryText = findViewById(R.id.batteryText);
         dashboardToolbar = findViewById(R.id.dashboardToolbar);
+        navDashboardItem = findViewById(R.id.navDashboardItem);
+        navLogItem = findViewById(R.id.navLogItem);
     }
 
     public void bindData() {
@@ -54,9 +56,15 @@ public class DashboardActivity extends AppCompatActivity {
         fatigueText.setTextColor(Color.parseColor("#4CAF50"));
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+    private void bindNavigation() {
+        navDashboardItem.setOnClickListener(v -> {
+            // Already on the dashboard tab.
+        });
+
+        navLogItem.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, DriverLogActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 }
