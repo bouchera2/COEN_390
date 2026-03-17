@@ -97,6 +97,7 @@ public class DriverLogActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemePreferenceManager.applySavedNightMode(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_driver_log);
@@ -147,6 +148,12 @@ public class DriverLogActivity extends AppCompatActivity {
 
         navLogItem.setOnClickListener(v -> {
             // Already on the log tab.
+        });
+
+        navSettingsItem.setOnClickListener(v -> {
+            Intent intent = new Intent(DriverLogActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
         });
 
         tabHistory.setOnClickListener(v -> {

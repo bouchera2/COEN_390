@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemePreferenceManager.applySavedNightMode(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
