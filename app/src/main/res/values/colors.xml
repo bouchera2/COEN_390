@@ -2,4 +2,18 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="log_primary">#135BEC</color>
+    <color name="log_dark_selected_background">#162034</color>
+    <color name="log_dark_unselected_background">#0F172A</color>
+    <color name="log_light_selected_background">#EEF4FF</color>
+    <color name="log_light_unselected_background">#FFFFFFFF</color>
+    <color name="log_dark_selected_stroke">#135BEC</color>
+    <color name="log_dark_unselected_stroke">#1E293B</color>
+    <color name="log_light_selected_stroke">#135BEC</color>
+    <color name="log_light_unselected_stroke">#E2E8F0</color>
+    <color name="log_dark_text">#F8FAFC</color>
+    <color name="log_light_text">#0F172A</color>
+    <color name="log_muted">#94A3B8</color>
+    <color name="log_bottom_sheet_text_dark">#F8FAFC</color>
+    <color name="log_bottom_sheet_text_light">#0F172A</color>
 </resources>
