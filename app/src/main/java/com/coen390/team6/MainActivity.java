@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemePreferenceManager.applySavedNightMode(this);
         super.onCreate(savedInstanceState);
          setContentView(R.layout.activity_main);
          Button btnDashboard = findViewById(R.id.btn_dashboard);

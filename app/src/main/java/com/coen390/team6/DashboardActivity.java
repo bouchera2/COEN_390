@@ -20,9 +20,11 @@ public class DashboardActivity extends AppCompatActivity {
     private MaterialToolbar dashboardToolbar;
     private View navDashboardItem;
     private View navLogItem;
+    private View navSettingsItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemePreferenceManager.applySavedNightMode(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dashboard);
@@ -46,6 +48,7 @@ public class DashboardActivity extends AppCompatActivity {
         dashboardToolbar = findViewById(R.id.dashboardToolbar);
         navDashboardItem = findViewById(R.id.navDashboardItem);
         navLogItem = findViewById(R.id.navLogItem);
+        navSettingsItem = findViewById(R.id.navSettingsItem);
     }
 
     public void bindData() {
@@ -63,6 +66,12 @@ public class DashboardActivity extends AppCompatActivity {
 
         navLogItem.setOnClickListener(v -> {
             Intent intent = new Intent(DashboardActivity.this, DriverLogActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        navSettingsItem.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, SettingsActivity.class);
             startActivity(intent);
             finish();
         });

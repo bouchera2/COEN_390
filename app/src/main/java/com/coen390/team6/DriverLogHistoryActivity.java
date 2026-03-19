@@ -30,12 +30,14 @@ public class DriverLogHistoryActivity extends AppCompatActivity {
 
     private View navDashboardItem;
     private View navLogItem;
+    private View navSettingsItem;
     private TextView tabLogEvent;
     private MaterialCardView emptyHistoryCard;
     private LinearLayout historyListContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemePreferenceManager.applySavedNightMode(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_driver_log_history);
@@ -60,6 +62,7 @@ public class DriverLogHistoryActivity extends AppCompatActivity {
     private void bindViews() {
         navDashboardItem = findViewById(R.id.navDashboardItem);
         navLogItem = findViewById(R.id.navLogItem);
+        navSettingsItem = findViewById(R.id.navSettingsItem);
         tabLogEvent = findViewById(R.id.tabLogEvent);
         emptyHistoryCard = findViewById(R.id.emptyHistoryCard);
         historyListContainer = findViewById(R.id.historyListContainer);
@@ -80,6 +83,12 @@ public class DriverLogHistoryActivity extends AppCompatActivity {
 
         navLogItem.setOnClickListener(v -> {
             // Already inside the log section.
+        });
+
+        navSettingsItem.setOnClickListener(v -> {
+            Intent intent = new Intent(DriverLogHistoryActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 
