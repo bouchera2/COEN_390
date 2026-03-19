@@ -40,6 +40,8 @@ public class DriverLogActivity extends AppCompatActivity {
 
     private View navDashboardItem;
     private View navLogItem;
+    private View navSettingsItem;
+    private TextView tabHistory;
     private MaterialCardView cardScheduledRest;
     private MaterialCardView cardUnscheduledStop;
     private MaterialCardView cardIncident;
@@ -116,6 +118,8 @@ public class DriverLogActivity extends AppCompatActivity {
     private void bindViews() {
         navDashboardItem = findViewById(R.id.navDashboardItem);
         navLogItem = findViewById(R.id.navLogItem);
+        navSettingsItem = findViewById(R.id.navSettingsItem);
+        tabHistory = findViewById(R.id.tabHistory);
         cardScheduledRest = findViewById(R.id.cardScheduledRest);
         cardUnscheduledStop = findViewById(R.id.cardUnscheduledStop);
         cardIncident = findViewById(R.id.cardIncident);
@@ -143,6 +147,12 @@ public class DriverLogActivity extends AppCompatActivity {
 
         navLogItem.setOnClickListener(v -> {
             // Already on the log tab.
+        });
+
+        tabHistory.setOnClickListener(v -> {
+            Intent intent = new Intent(DriverLogActivity.this, DriverLogHistoryActivity.class);
+            startActivity(intent);
+            finish();
         });
     }
 
