@@ -12,7 +12,22 @@
     <string name="bt_status_placeholder">Connected</string>
     <string name="battery_value_placeholder">85%</string>
     <string name="back_to_main">Back to Main</string>
-    <string name="action_logout">Logout</string>
-    <string name="disconnect">Disconnect</string>
     <string name="default_web_client_id">425476122959-daj6j66vm2ftbmdk38740ndg6dv7pt0m.apps.googleusercontent.com</string>
+    <string name="fleetguard_title">FleetGuard</string>
+    <string name="connected">Connected</string>
+    <string name="safety_status">Safety Status</string>
+    <string name="fatigue_low_label">Fatigue Risk: Low</string>
+    <string name="optimal_condition">Optimal condition for driving.</string>
+    <string name="detailed_analysis">Detailed Analysis</string>
+    <string name="driving_time">Driving Time</string>
+    <string name="driving_time_value">04:22</string>
+    <string name="last_rest">Last Rest</string>
+    <string name="last_rest_value">08:15 AM</string>
+    <string name="active_route">Active Route</string>
+    <string name="gps_hint">Tap to expand GPS</string>
+    <string name="eta_value">ETA: 14:30</string>
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_alerts">Alerts</string>
+    <string name="nav_log">Log</string>
+    <string name="nav_settings">Settings</string>
 </resources>
