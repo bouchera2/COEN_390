@@ -45,6 +45,10 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.play.services.auth)
 
+    // Google Maps & Location
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

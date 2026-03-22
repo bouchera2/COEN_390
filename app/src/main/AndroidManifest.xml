@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
-    <!-- Required for BLE scanning -->
+    <!-- Location & Network -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,6 +24,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.COEN390_project">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDoT1tId6gDkogs1QdV4y5-IT-vOim1lSg"  />
+
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -33,21 +37,12 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".DashboardActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DriverLogActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DriverLogHistoryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+        <activity android:name=".DashboardActivity" android:exported="false" />
+        <activity android:name=".DriverLogActivity" android:exported="false" />
+        <activity android:name=".DriverLogHistoryActivity" android:exported="false" />
+        <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".GpsNavigationActivity" android:exported="false" />
 
     </application>
 

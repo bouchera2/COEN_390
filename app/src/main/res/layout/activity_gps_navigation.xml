@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Full-screen Map -->
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Top Direction Banner -->
+    <LinearLayout
+        android:id="@+id/directionBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/gps_direction_bg"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:visibility="gone">
+
+        <!-- Turn Icon -->
+        <FrameLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/gps_turn_icon_bg"
+            android:layout_marginEnd="14dp">
+
+            <TextView
+                android:id="@+id/tvTurnIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="↗"
+                android:textSize="24sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"/>
+        </FrameLayout>
+
+        <!-- Direction Text -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="700 ft"
+                    android:textSize="16sp"
+                    android:textColor="#60A5FA"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TRUCK ROUTE"
+                    android:textSize="10sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/gps_badge_bg"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvDirectionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Turn right on I-80 E"
+                android:textSize="18sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_marginTop="2dp"/>
+
+            <TextView
+                android:id="@+id/tvDirectionDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Follow signs for Gary / South Bend"
+                android:textSize="12sp"
+                android:textColor="#94A3B8"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Search Bar -->
+    <EditText
+        android:id="@+id/etSearchDestination"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/gps_search_bg"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="12dp"
+        android:drawableTint="#94A3B8"
+        android:hint="Search destination or stops..."
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="#F1F5F9"
+        android:textColorHint="#64748B"
+        android:textSize="14sp"
+        android:inputType="text"
+        android:imeOptions="actionSearch"/>
+
+    <!-- Map Control Buttons (right side) -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnZoomIn"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:text="+"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#1E293B"
+            app:cornerRadius="10dp"
+            android:layout_marginBottom="4dp"/>
+
+        <Button
+            android:id="@+id/btnZoomOut"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:text="-"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#1E293B"
+            app:cornerRadius="10dp"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/btnMyLocation"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:text="◎"
+            android:textSize="18sp"
+            android:textColor="#2563EB"
+            android:backgroundTint="#1E293B"
+            app:cornerRadius="10dp"/>
+    </LinearLayout>
+
+    <!-- Bottom Info Panel -->
+    <LinearLayout
+        android:id="@+id/bottomPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Route Info Cards -->
+        <LinearLayout
+            android:id="@+id/routeInfoPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone">
+
+            <!-- Arrival Card -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/gps_info_card_bg"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:layout_marginEnd="6dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ARRIVAL"
+                    android:textSize="10sp"
+                    android:textColor="#94A3B8"
+                    android:letterSpacing="0.1"/>
+
+                <TextView
+                    android:id="@+id/tvArrivalTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--:--"
+                    android:textSize="28sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tvArrivalAmPm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PM"
+                    android:textSize="14sp"
+                    android:textColor="#94A3B8"/>
+            </LinearLayout>
+
+            <!-- Distance Card -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/gps_info_card_bg"
+                android:orientation="vertical"
+                android:padding="14dp"
+                android:layout_marginStart="6dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DISTANCE"
+                    android:textSize="10sp"
+                    android:textColor="#94A3B8"
+                    android:letterSpacing="0.1"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="bottom">
+
+                    <TextView
+                        android:id="@+id/tvDistanceValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="28sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" km"
+                        android:textSize="14sp"
+                        android:textColor="#94A3B8"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvRouteName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="12sp"
+                    android:textColor="#94A3B8"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Time Left Card -->
+        <LinearLayout
+            android:id="@+id/timeLeftPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gps_info_card_bg"
+            android:orientation="vertical"
+            android:padding="14dp"
+            android:layout_marginBottom="12dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TIME LEFT"
+                android:textSize="10sp"
+                android:textColor="#94A3B8"
+                android:letterSpacing="0.1"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="bottom">
+
+                <TextView
+                    android:id="@+id/tvTimeLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="28sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tvTimeLeftUnit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" min"
+                    android:textSize="14sp"
+                    android:textColor="#94A3B8"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvTrafficStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Clear Traffic"
+                android:textSize="12sp"
+                android:textColor="#4ADE80"/>
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <!-- Start / Exit Route Button -->
+            <Button
+                android:id="@+id/btnStartRoute"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:text="Start Navigation"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:backgroundTint="#2563EB"
+                android:layout_marginEnd="6dp"
+                app:cornerRadius="12dp"/>
+
+            <Button
+                android:id="@+id/btnExitRoute"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:text="✕  Exit"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:backgroundTint="#EF4444"
+                android:visibility="gone"
+                android:layout_marginEnd="6dp"
+                app:cornerRadius="12dp"/>
+
+            <Button
+                android:id="@+id/btnRoutes"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:text="⚙  Routes"
+                android:textSize="14sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:backgroundTint="#334155"
+                android:visibility="gone"
+                android:layout_marginStart="6dp"
+                app:cornerRadius="12dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
