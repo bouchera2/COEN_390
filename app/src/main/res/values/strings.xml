@@ -27,6 +27,8 @@
     <string name="last_rest_value">08:15 AM</string>
     <string name="active_route">Active Route</string>
     <string name="gps_hint">Tap to expand GPS</string>
+    <string name="gps_navigation_title">GPS Navigation</string>
+    <string name="gps_back_button">Go back</string>
     <string name="eta_value">ETA: 14:30</string>
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_alerts">Alerts</string>
