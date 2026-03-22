@@ -70,6 +70,19 @@
                         android:layout_height="wrap_content" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="20dp"
+                android:text="Sign Out"
+                android:textSize="15sp"
+                android:textColor="#EF4444"
+                android:textStyle="bold"
+                android:backgroundTint="#1E293B"
+                app:cornerRadius="12dp"/>
+
         </androidx.core.widget.NestedScrollView>
 
         <LinearLayout
