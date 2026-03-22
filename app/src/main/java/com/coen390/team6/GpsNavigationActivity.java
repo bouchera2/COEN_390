@@ -61,7 +61,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
 
     // UI
     private EditText etSearch;
-    private Button btnStartRoute, btnExitRoute, btnRoutes;
+    private Button btnBack, btnStartRoute, btnExitRoute, btnRoutes;
     private Button btnZoomIn, btnZoomOut, btnMyLocation;
     private LinearLayout directionBanner, routeInfoPanel, timeLeftPanel;
     private TextView tvArrivalTime, tvArrivalAmPm, tvDistanceValue, tvRouteName;
@@ -90,6 +90,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
 
     private void bindViews() {
         etSearch = findViewById(R.id.etSearchDestination);
+        btnBack = findViewById(R.id.btnBack);
         btnStartRoute = findViewById(R.id.btnStartRoute);
         btnExitRoute = findViewById(R.id.btnExitRoute);
         btnRoutes = findViewById(R.id.btnRoutes);
@@ -122,6 +123,8 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
             }
             return false;
         });
+
+        btnBack.setOnClickListener(v -> finish());
 
         btnStartRoute.setOnClickListener(v -> {
             String destination = etSearch.getText().toString().trim();
