@@ -221,10 +221,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToMain() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+        String uid = mAuth.getCurrentUser().getUid();
+        com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("drivers").document(uid).get()
+                .addOnSuccessListener(doc -> {
+                    Intent intent;
+                    if (doc.exists() && doc.getBoolean("profileComplete") != null
+                            && doc.getBoolean("profileComplete")) {
+                        // Profile complete — go to Dashboard
+                        intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                    } else {
+                        // Profile not complete — go to setup
+                        intent = new Intent(LoginActivity.this, DriverProfileSetupActivity.class);
+                    }
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    // Firestore error — go to profile setup as fallback
+                    Intent intent = new Intent(LoginActivity.this, DriverProfileSetupActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                });
     }
 
     private void showLoading(boolean isLoading) {
