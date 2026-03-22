@@ -75,5 +75,13 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+
+        // GPS Map card — tap to open full GPS navigation
+        View activeRouteCard = findViewById(R.id.activeRouteCard);
+        activeRouteCard.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, GpsNavigationActivity.class);
+            startActivity(intent);
+        });
     }
 }
