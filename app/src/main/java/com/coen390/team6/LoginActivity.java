@@ -228,8 +228,8 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent;
                     if (doc.exists() && doc.getBoolean("profileComplete") != null
                             && doc.getBoolean("profileComplete")) {
-                        // Profile complete — go to Dashboard
-                        intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                        // Profile complete — go to BLE connection screen first.
+                        intent = new Intent(LoginActivity.this, MainActivity.class);
                     } else {
                         // Profile not complete — go to setup
                         intent = new Intent(LoginActivity.this, DriverProfileSetupActivity.class);

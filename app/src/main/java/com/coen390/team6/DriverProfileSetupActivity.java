@@ -40,7 +40,7 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
         Button btnSkip = findViewById(R.id.btnSkip);
 
         btnSave.setOnClickListener(v -> saveProfile());
-        btnSkip.setOnClickListener(v -> goToDashboard());
+        btnSkip.setOnClickListener(v -> goToMain());
     }
 
     private void saveProfile() {
@@ -117,7 +117,7 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
                     Toast.makeText(this, "Profile saved! Max HR: " + maxHR +
                                     " | Normal zone: " + normalHRLow + "-" + normalHRHigh + " BPM",
                             Toast.LENGTH_LONG).show();
-                    goToDashboard();
+                    goToMain();
                 })
                 .addOnFailureListener(e -> {
                     // If document doesn't exist yet, use set instead of update
@@ -137,15 +137,15 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
                     db.collection("drivers").document(uid).set(profile)
                             .addOnSuccessListener(a -> {
                                 Toast.makeText(this, "Profile created!", Toast.LENGTH_SHORT).show();
-                                goToDashboard();
+                                goToMain();
                             })
                             .addOnFailureListener(err ->
                                     Toast.makeText(this, "Error: " + err.getMessage(), Toast.LENGTH_LONG).show());
                 });
     }
 
-    private void goToDashboard() {
-        Intent intent = new Intent(this, DashboardActivity.class);
+    private void goToMain() {
+        Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
