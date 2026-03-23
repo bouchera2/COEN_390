@@ -93,6 +93,15 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
         // Stress/alert zone (above 70% = stressed or panicking)
         int stressHRThreshold = (int) (restingHR + 0.7 * hrReserve);
 
+        DriverProfilePreferences.saveThresholds(
+                this,
+                restingHR,
+                normalHRLow,
+                normalHRHigh,
+                fatigueHRThreshold,
+                stressHRThreshold
+        );
+
         // Build Firestore document
         Map<String, Object> profile = new HashMap<>();
         profile.put("name", name);
