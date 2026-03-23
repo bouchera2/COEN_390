@@ -8,12 +8,18 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +31,7 @@ import androidx.core.app.ActivityCompat;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,8 +51,37 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothDevice esp32Device;
     private final Handler reconnectHandler = new Handler(Looper.getMainLooper());
+    private final Handler scanHandler = new Handler(Looper.getMainLooper());
     private int reconnectDelay = 2000;
     private boolean shouldReconnect = true;
+    private boolean isScanning = false;
+
+    private final ScanCallback scanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, @NonNull ScanResult result) {
+            super.onScanResult(callbackType, result);
+            BluetoothDevice device = result.getDevice();
+            String deviceName = null;
+            if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH_CONNECT)
+                    == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                deviceName = device.getName();
+            }
+
+            if (TARGET_DEVICE_NAME.equals(deviceName)) {
+                stopBleScan();
+                esp32Device = device;
+                connectToDevice();
+            }
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            super.onScanFailed(errorCode);
+            isScanning = false;
+            Log.d(TAG, "BLE scan failed: " + errorCode);
+            runOnUiThread(() -> updateStatus("Status: Scan failed", android.R.color.holo_red_dark));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,15 +124,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                && (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED)) {
 
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
-                        PERMISSION_REQUEST_CODE);
-                return false;
-            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
+                    PERMISSION_REQUEST_CODE);
+            return false;
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_REQUEST_CODE);
+            return false;
         }
         return true;
     }
@@ -111,16 +154,32 @@ public class MainActivity extends AppCompatActivity {
             bluetoothAdapter.enable();
         }
 
-        // Scan bonded Bluetooth devices
-        for (BluetoothDevice device : bluetoothAdapter.getBondedDevices()) {
-            if (TARGET_DEVICE_NAME.equals(device.getName())) {
-                esp32Device = device;
-                connectToDevice();
-                return;
-            }
+        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+        if (scanner == null) {
+            updateStatus("Status: BLE scanner unavailable", android.R.color.holo_red_dark);
+            return;
         }
-        Log.d(TAG, "ESP32 not found in bonded devices!");
-        updateStatus("Status: Device not found", android.R.color.holo_red_dark);
+
+        if (isScanning) {
+            stopBleScan();
+        }
+
+        updateStatus("Status: Scanning...", android.R.color.holo_orange_dark);
+        isScanning = true;
+        ScanFilter filter = new ScanFilter.Builder()
+                .setServiceUuid(new ParcelUuid(SERVICE_UUID))
+                .build();
+        ScanSettings settings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .build();
+        scanner.startScan(Collections.singletonList(filter), settings, scanCallback);
+
+        scanHandler.postDelayed(() -> {
+            if (isScanning) {
+                stopBleScan();
+                updateStatus("Status: Device not found", android.R.color.holo_red_dark);
+            }
+        }, 10000);
     }
 
     private void connectToDevice() {
@@ -212,6 +271,20 @@ public class MainActivity extends AppCompatActivity {
         }, reconnectDelay);
     }
 
+    private void stopBleScan() {
+        if (bluetoothAdapter == null) {
+            isScanning = false;
+            return;
+        }
+
+        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+        if (scanner != null) {
+            scanner.stopScan(scanCallback);
+        }
+        scanHandler.removeCallbacksAndMessages(null);
+        isScanning = false;
+    }
+
     private String buildConnectedStatus(BleSensorData sensorData) {
         if (!sensorData.isFingerDetected()) {
             return "Status: Connected - waiting for finger";
@@ -249,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         shouldReconnect = false;
+        stopBleScan();
         reconnectHandler.removeCallbacksAndMessages(null);
         if (bluetoothGatt != null) {
             bluetoothGatt.close();
