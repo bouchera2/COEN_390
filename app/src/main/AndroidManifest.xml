@@ -40,6 +40,7 @@
         </activity>
 
         <activity android:name=".DashboardActivity" android:exported="false" />
+        <activity android:name=".BleConnectionActivity" android:exported="false" />
         <activity android:name=".DriverLogActivity" android:exported="false" />
         <activity android:name=".DriverLogHistoryActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false" />
