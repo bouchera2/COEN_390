@@ -2,6 +2,8 @@ package com.coen390.team6;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
 import android.graphics.Color;
@@ -23,6 +25,14 @@ public class DashboardActivity extends AppCompatActivity {
     private View navDashboardItem;
     private View navLogItem;
     private View navSettingsItem;
+    private final Handler sensorRefreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable sensorRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            refreshSensorData();
+            sensorRefreshHandler.postDelayed(this, 1000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +73,13 @@ public class DashboardActivity extends AppCompatActivity {
         super.onResume();
         refreshSensorData();
         syncDriverThresholds();
+        sensorRefreshHandler.post(sensorRefreshRunnable);
+    }
+
+    @Override
+    protected void onPause() {
+        sensorRefreshHandler.removeCallbacks(sensorRefreshRunnable);
+        super.onPause();
     }
 
     private void bindNavigation() {
