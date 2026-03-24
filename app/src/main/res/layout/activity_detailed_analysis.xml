@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F6F6F8">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <Button
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="←"
+                android:textSize="20sp"
+                android:backgroundTint="@android:color/transparent"
+                android:textColor="#1F2937" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Detailed Analysis"
+                android:textColor="#0F172A"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- ── LIVE DATA ── -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LIVE SENSOR DATA"
+            android:textAllCaps="true"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FFFFFF"
+            app:cardCornerRadius="14dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- BPM row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Heart Rate"
+                        android:textColor="#64748B"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvLiveBpm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="#0F172A"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Finger row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Finger"
+                        android:textColor="#64748B"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvLiveFinger"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="#0F172A"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Sudden movement row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Sudden Movement"
+                        android:textColor="#64748B"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvLiveSudden"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="#0F172A"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#E2E8F0"
+                    android:layout_marginBottom="10dp"/>
+
+                <!-- IMU label -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="IMU"
+                    android:textAllCaps="true"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <!-- Motion Accel -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Motion Accel"
+                        android:textColor="#64748B"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvLiveMotionAccel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="#0F172A"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Gyro -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Gyroscope Mag"
+                        android:textColor="#64748B"
+                        android:textSize="14sp"/>
+                    <TextView
+                        android:id="@+id/tvLiveGyro"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textColor="#0F172A"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Ax Ay Az -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ax"
+                            android:textColor="#94A3B8"
+                            android:textSize="12sp"/>
+                        <TextView
+                            android:id="@+id/tvLiveAx"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textColor="#0F172A"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ay"
+                            android:textColor="#94A3B8"
+                            android:textSize="12sp"/>
+                        <TextView
+                            android:id="@+id/tvLiveAy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textColor="#0F172A"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Az"
+                            android:textColor="#94A3B8"
+                            android:textSize="12sp"/>
+                        <TextView
+                            android:id="@+id/tvLiveAz"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textColor="#0F172A"
+                            android:textSize="14sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ── LAST SAVED READING ── -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LAST SAVED READING"
+            android:textAllCaps="true"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FFFFFF"
+            app:cardCornerRadius="14dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Heart Rate" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvLastBpm" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#0F172A" android:textSize="14sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Sudden Movement" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvLastSudden" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#0F172A" android:textSize="14sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Motion Accel" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvLastMotionAccel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#0F172A" android:textSize="14sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Gyroscope Mag" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvLastGyro" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#0F172A" android:textSize="14sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ax / Ay / Az" android:textColor="#64748B" android:textSize="14sp"/>
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+                        <TextView android:id="@+id/tvLastAx" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#0F172A" android:textSize="14sp" android:textStyle="bold" android:layout_marginEnd="6dp"/>
+                        <TextView android:id="@+id/tvLastAy" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#0F172A" android:textSize="14sp" android:textStyle="bold" android:layout_marginEnd="6dp"/>
+                        <TextView android:id="@+id/tvLastAz" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#0F172A" android:textSize="14sp" android:textStyle="bold"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Saved at" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvLastTimestamp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#94A3B8" android:textSize="13sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ── STATS ── -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STATISTICS (LAST 50 READINGS)"
+            android:textAllCaps="true"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="#FFFFFF"
+            app:cardCornerRadius="14dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Total Readings" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvReadingCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#135BEC" android:textSize="14sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Avg BPM" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvAvgBpm" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#0F172A" android:textSize="14sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="10dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Min BPM" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvMinBpm" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#22C55E" android:textSize="14sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Max BPM" android:textColor="#64748B" android:textSize="14sp"/>
+                    <TextView android:id="@+id/tvMaxBpm" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" android:textColor="#EF4444" android:textSize="14sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</ScrollView>

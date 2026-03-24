@@ -5,15 +5,19 @@ import android.content.SharedPreferences;
 
 public final class BleSensorPreferences {
     private static final String PREFS_NAME = "ble_sensor_prefs";
-    private static final String KEY_CONNECTED = "connected";
+    private static final String KEY_CONNECTED       = "connected";
     private static final String KEY_FINGER_DETECTED = "finger_detected";
-    private static final String KEY_BPM = "bpm";
-    private static final String KEY_AVG_BPM = "avg_bpm";
+    private static final String KEY_BPM             = "bpm";
+    private static final String KEY_AVG_BPM         = "avg_bpm";
     private static final String KEY_SUDDEN_MOVEMENT = "sudden_movement";
-    private static final String KEY_LAST_PAYLOAD = "last_payload";
+    private static final String KEY_MOTION_ACCEL    = "motion_accel";
+    private static final String KEY_GYRO_MAG        = "gyro_mag";
+    private static final String KEY_AX              = "ax";
+    private static final String KEY_AY              = "ay";
+    private static final String KEY_AZ              = "az";
+    private static final String KEY_LAST_PAYLOAD    = "last_payload";
 
-    private BleSensorPreferences() {
-    }
+    private BleSensorPreferences() {}
 
     private static SharedPreferences getPrefs(Context context) {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -30,10 +34,15 @@ public final class BleSensorPreferences {
     public static void saveSensorData(Context context, BleSensorData data) {
         getPrefs(context).edit()
                 .putBoolean(KEY_FINGER_DETECTED, data.isFingerDetected())
-                .putFloat(KEY_BPM, data.getBpm())
-                .putInt(KEY_AVG_BPM, data.getAvgBpm())
+                .putFloat(KEY_BPM,               data.getBpm())
+                .putInt(KEY_AVG_BPM,             data.getAvgBpm())
                 .putBoolean(KEY_SUDDEN_MOVEMENT, data.isSuddenMovement())
-                .putString(KEY_LAST_PAYLOAD, data.getRawPayload())
+                .putFloat(KEY_MOTION_ACCEL,      data.getMotionAccel())
+                .putFloat(KEY_GYRO_MAG,          data.getGyroMag())
+                .putFloat(KEY_AX,                data.getAx())
+                .putFloat(KEY_AY,                data.getAy())
+                .putFloat(KEY_AZ,                data.getAz())
+                .putString(KEY_LAST_PAYLOAD,     data.getRawPayload())
                 .apply();
     }
 
@@ -51,6 +60,26 @@ public final class BleSensorPreferences {
 
     public static boolean hasSuddenMovement(Context context) {
         return getPrefs(context).getBoolean(KEY_SUDDEN_MOVEMENT, false);
+    }
+
+    public static float getMotionAccel(Context context) {
+        return getPrefs(context).getFloat(KEY_MOTION_ACCEL, 0f);
+    }
+
+    public static float getGyroMag(Context context) {
+        return getPrefs(context).getFloat(KEY_GYRO_MAG, 0f);
+    }
+
+    public static float getAx(Context context) {
+        return getPrefs(context).getFloat(KEY_AX, 0f);
+    }
+
+    public static float getAy(Context context) {
+        return getPrefs(context).getFloat(KEY_AY, 0f);
+    }
+
+    public static float getAz(Context context) {
+        return getPrefs(context).getFloat(KEY_AZ, 0f);
     }
 
     public static String getLastPayload(Context context) {

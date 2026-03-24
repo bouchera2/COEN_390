@@ -45,7 +45,7 @@
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="false" />
         <activity android:name=".GpsNavigationActivity" android:exported="false" />
-
+        <activity android:name=".DetailedAnalysisActivity" />
     </application>
 
 </manifest>

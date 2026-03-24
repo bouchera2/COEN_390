@@ -106,6 +106,9 @@ public class DashboardActivity extends AppCompatActivity {
             Intent intent = new Intent(DashboardActivity.this, GpsNavigationActivity.class);
             startActivity(intent);
         });
+
+        findViewById(R.id.btnDetailedAnalysis).setOnClickListener(v ->
+                startActivity(new Intent(this, DetailedAnalysisActivity.class)));
     }
 
     private void refreshSensorData() {
