@@ -8,9 +8,16 @@
     <string name="label_battery">Battery</string>
     <string name="status_verified">Verified</string>
     <string name="heartrate_value_placeholder">72 bpm</string>
+    <string name="heartrate_value_waiting">Waiting...</string>
+    <string name="heartrate_value_format">%1$d bpm</string>
     <string name="fatigue_value_placeholder">Low</string>
+    <string name="fatigue_value_waiting">Waiting</string>
+    <string name="fatigue_value_medium">Moderate</string>
+    <string name="fatigue_value_high">High</string>
     <string name="bt_status_placeholder">Connected</string>
+    <string name="bt_status_disconnected">Disconnected</string>
     <string name="battery_value_placeholder">85%</string>
+    <string name="battery_value_unavailable">--</string>
     <string name="back_to_main">Back to Main</string>
     <string name="action_logout">Logout</string>
     <string name="disconnect">Disconnect</string>
