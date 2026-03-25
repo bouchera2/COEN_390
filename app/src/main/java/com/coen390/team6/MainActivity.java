@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private static final UUID CLIENT_CHARACTERISTIC_CONFIG_UUID =
             UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
 
+    private final FirestoreRepository firestoreRepository = new FirestoreRepository();
+
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothGatt bluetoothGatt;
 
@@ -237,12 +239,33 @@ public class MainActivity extends AppCompatActivity {
 
                 // Enable Notifications
                 gatt.setCharacteristicNotification(characteristic, true);
+                if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                    gatt.requestMtu(185);
+                }
                 BluetoothGattDescriptor cccd = characteristic.getDescriptor(CLIENT_CHARACTERISTIC_CONFIG_UUID);
                 if (cccd != null) {
                     cccd.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                     gatt.writeDescriptor(cccd);
                 }
                 Log.d(TAG, "Notifications enabled!");
+            }
+            @Override
+            public void onMtuChanged(@NonNull BluetoothGatt gatt, int mtu, int status) {
+                Log.d(TAG, "MTU = " + mtu);
+                BluetoothGattCharacteristic characteristic = gatt
+                        .getService(SERVICE_UUID)
+                        .getCharacteristic(CHARACTERISTIC_UUID);
+                BluetoothGattDescriptor cccd = characteristic
+                        .getDescriptor(CLIENT_CHARACTERISTIC_CONFIG_UUID);
+                if (cccd != null) {
+                    cccd.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                    if (ActivityCompat.checkSelfPermission(MainActivity.this,
+                            Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                        gatt.writeDescriptor(cccd);
+                        Log.d(TAG, "Notifications enabled after MTU!");
+                    }
+                }
             }
 
             @Override
@@ -251,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
                 final String value = new String(characteristic.getValue(), StandardCharsets.UTF_8);
                 BleSensorData sensorData = BleSensorData.fromPayload(value);
                 BleSensorPreferences.saveSensorData(MainActivity.this, sensorData);
+                firestoreRepository.saveSensorReading(sensorData);
 
                 runOnUiThread(() -> updateStatus(buildConnectedStatus(sensorData), android.R.color.holo_green_dark));
                 Log.d(TAG, "Value received: " + value);
