@@ -11,20 +11,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#101622"
-            app:title="Settings"
-            app:titleTextColor="#F8FAFC" />
-
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
             android:fillViewport="true"
-            android:padding="16dp">
+            android:paddingStart="16dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,21 +30,18 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="DRIVER STATE THRESHOLDS"
-                    android:textAllCaps="true"
-                    android:textColor="#64748B"
-                    android:textSize="11sp"
+                    android:text="Settings"
+                    android:textColor="#F8FAFC"
+                    android:textSize="32sp"
                     android:textStyle="bold" />
 
-                <!-- ── Threshold Card ── -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:backgroundTint="#0F172A"
-                    app:cardCornerRadius="16dp"
-                    app:strokeColor="#1E293B"
+                    android:layout_marginTop="24dp"
+                    android:backgroundTint="#192233"
+                    app:cardCornerRadius="20dp"
+                    app:strokeColor="#232F48"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -58,213 +51,407 @@
                         android:padding="20dp">
 
                         <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:text="The app reclassifies driver state using these thresholds, overriding the Arduino value on every BLE packet received."
-                            android:textColor="#64748B"
-                            android:textSize="13sp" />
-
-                        <!-- ── DROWSY section ── -->
-                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="12dp"
-                            android:text="DROWSY  (BPM below AND GSR ratio below)"
+                            android:text="PERSONAL INFORMATION"
                             android:textAllCaps="true"
-                            android:textColor="#EF4444"
-                            android:textSize="11sp"
+                            android:textColor="#135BEC"
+                            android:textSize="10sp"
                             android:textStyle="bold" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="4dp">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Max BPM"
-                                android:textColor="#64748B"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:id="@+id/tvBpmDrowsyVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="&lt; 60 BPM"
-                                android:textColor="#F8FAFC"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:id="@+id/seekBpmDrowsy"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="4dp">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Max GSR ratio"
-                                android:textColor="#64748B"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:id="@+id/tvGsrDrowsyVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="&lt; 0.90"
-                                android:textColor="#F8FAFC"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:id="@+id/seekGsrDrowsy"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="20dp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#1E293B"
-                            android:layout_marginBottom="20dp" />
-
-                        <!-- ── STRESSED section ── -->
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:id="@+id/tvDriverName"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="12dp"
-                            android:text="STRESSED  (BPM above AND GSR ratio above)"
-                            android:textAllCaps="true"
-                            android:textColor="#F97316"
-                            android:textSize="11sp"
+                            android:layout_marginTop="14dp"
+                            android:text="Driver"
+                            android:textColor="#F8FAFC"
+                            android:textSize="24sp"
                             android:textStyle="bold" />
 
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/tvDriverEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="4dp">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Min BPM"
-                                android:textColor="#64748B"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:id="@+id/tvBpmStressedVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="&gt; 95 BPM"
-                                android:textColor="#F8FAFC"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:id="@+id/seekBpmStressed"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="4dp">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Min GSR ratio"
-                                android:textColor="#64748B"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:id="@+id/tvGsrStressedVal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="&gt; 1.00"
-                                android:textColor="#F8FAFC"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:id="@+id/seekGsrStressed"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="20dp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#1E293B"
-                            android:layout_marginBottom="16dp" />
-
-                        <!-- Live preview -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="16dp">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Current sensor result"
-                                android:textColor="#64748B"
-                                android:textSize="14sp" />
-                            <TextView
-                                android:id="@+id/tvStatePreview"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="--"
-                                android:textColor="#94A3B8"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <!-- Reset -->
-                        <Button
-                            android:id="@+id/btnResetThresholds"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Reset to Arduino Defaults"
+                            android:layout_marginTop="4dp"
+                            android:text="No email available"
                             android:textColor="#94A3B8"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                            android:textSize="14sp" />
 
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="18dp"
+                            android:layout_marginBottom="18dp"
+                            android:background="#334155" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/btnEditPersonalInfo"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Edit Personal Information"
+                                android:textAllCaps="false"
+                                android:textColor="#F8FAFC"
+                                app:strokeColor="#334155" />
+                        </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- ── Sign Out ── -->
-                <Button
-                    android:id="@+id/btnLogout"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="16dp"
-                    android:backgroundTint="#1E293B"
-                    android:text="Sign Out"
-                    android:textColor="#EF4444"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="12dp" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="#135BEC1A"
+                    app:cardCornerRadius="20dp"
+                    app:strokeColor="#135BEC33"
+                    app:strokeWidth="1dp">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <FrameLayout
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:background="#1E3A8A33"
+                            android:foregroundGravity="center">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                android:contentDescription="@string/label_bluetooth"
+                                android:src="@drawable/ic_status_bluetooth"
+                                app:tint="#135BEC" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Sensor Connection"
+                            android:textColor="#F8FAFC"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvDeviceStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Waiting for device"
+                            android:textColor="#22C55E"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvDeviceSummary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:gravity="center"
+                            android:text=""
+                            android:textColor="#94A3B8"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="#192233"
+                    app:cardCornerRadius="20dp"
+                    app:strokeColor="#232F48"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:contentDescription="@string/label_heart_rate"
+                                android:src="@drawable/ic_heart"
+                                app:tint="#135BEC" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:text="Vital Thresholds"
+                                android:textColor="#F8FAFC"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="18dp"
+                            android:backgroundTint="#101622"
+                            app:cardCornerRadius="18dp"
+                            app:strokeColor="#334155"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="18dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Drowsy Detection"
+                                    android:textAllCaps="true"
+                                    android:textColor="#EF4444"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="Flags the driver when both values fall below the selected limits."
+                                    android:textColor="#94A3B8"
+                                    android:textSize="13sp" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="18dp"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Maximum BPM"
+                                        android:textColor="#CBD5E1"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tvBpmDrowsyVal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="&lt; 60 BPM"
+                                        android:textColor="#F8FAFC"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <SeekBar
+                                    android:id="@+id/seekBpmDrowsy"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:progressTint="#EF4444"
+                                    android:thumbTint="#EF4444" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Maximum GSR Ratio"
+                                        android:textColor="#CBD5E1"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tvGsrDrowsyVal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="&lt; 0.90"
+                                        android:textColor="#F8FAFC"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <SeekBar
+                                    android:id="@+id/seekGsrDrowsy"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:progressTint="#EF4444"
+                                    android:thumbTint="#EF4444" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:backgroundTint="#101622"
+                            app:cardCornerRadius="18dp"
+                            app:strokeColor="#334155"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="18dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Stress Detection"
+                                    android:textAllCaps="true"
+                                    android:textColor="#F97316"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="Flags the driver when both values rise above the selected limits."
+                                    android:textColor="#94A3B8"
+                                    android:textSize="13sp" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="18dp"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Minimum BPM"
+                                        android:textColor="#CBD5E1"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tvBpmStressedVal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="&gt; 95 BPM"
+                                        android:textColor="#F8FAFC"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <SeekBar
+                                    android:id="@+id/seekBpmStressed"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:progressTint="#F97316"
+                                    android:thumbTint="#F97316" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Minimum GSR Ratio"
+                                        android:textColor="#CBD5E1"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tvGsrStressedVal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="&gt; 1.00"
+                                        android:textColor="#F8FAFC"
+                                        android:textSize="18sp"
+                                        android:textStyle="bold" />
+                                </LinearLayout>
+
+                                <SeekBar
+                                    android:id="@+id/seekGsrStressed"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="6dp"
+                                    android:progressTint="#F97316"
+                                    android:thumbTint="#F97316" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <Button
+                            android:id="@+id/btnResetThresholds"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="18dp"
+                            android:text="Reset Thresholds"
+                            android:textAllCaps="false"
+                            android:textColor="#CBD5E1"
+                            app:strokeColor="#475569" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Signing out will stop live monitoring on this device until you log in again."
+                        android:textAllCaps="true"
+                        android:textColor="#94A3B8"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btnLogout"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="14dp"
+                        android:backgroundTint="#EF44441A"
+                        android:text="Sign Out"
+                        android:textColor="#EF4444"
+                        android:textStyle="bold"
+                        app:cornerRadius="14dp" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <!-- ── Bottom Nav ── -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
@@ -287,12 +474,14 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:contentDescription="Dashboard"
                     android:src="@drawable/ic_house"
                     android:tint="#64748B" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -314,12 +503,14 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:contentDescription="Logs"
                     android:src="@drawable/ic_clipboard_list"
                     android:tint="#64748B" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -341,12 +532,14 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:contentDescription="Alerts"
                     android:src="@drawable/ic_bell"
                     android:tint="#64748B" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -368,12 +561,14 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical">
+
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:contentDescription="Settings"
                     android:src="@drawable/ic_gear"
                     android:tint="#135BEC" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -385,6 +580,5 @@
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
 </FrameLayout>

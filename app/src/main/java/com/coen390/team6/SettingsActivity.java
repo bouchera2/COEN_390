@@ -16,6 +16,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Locale;
 
@@ -43,11 +45,14 @@ public class SettingsActivity extends AppCompatActivity {
     private SeekBar  seekGsrStressed;
     private TextView tvGsrStressedVal;
 
-    // Preview badge
-    private TextView tvStatePreview;
+    private TextView tvDriverName;
+    private TextView tvDriverEmail;
+    private TextView tvDeviceStatus;
+    private TextView tvDeviceSummary;
 
     // Reset button
     private Button btnResetThresholds;
+    private Button btnEditPersonalInfo;
 
     // ── SeekBar config ───────────────────────────────────────────────────────
     private static final int BPM_DROWSY_MIN   = 40;
@@ -90,8 +95,19 @@ public class SettingsActivity extends AppCompatActivity {
         tvGsrDrowsyVal   = findViewById(R.id.tvGsrDrowsyVal);
         seekGsrStressed  = findViewById(R.id.seekGsrStressed);
         tvGsrStressedVal = findViewById(R.id.tvGsrStressedVal);
-        tvStatePreview   = findViewById(R.id.tvStatePreview);
         btnResetThresholds = findViewById(R.id.btnResetThresholds);
+        btnEditPersonalInfo = findViewById(R.id.btnEditPersonalInfo);
+        tvDriverName = findViewById(R.id.tvDriverName);
+        tvDriverEmail = findViewById(R.id.tvDriverEmail);
+        tvDeviceStatus = findViewById(R.id.tvDeviceStatus);
+        tvDeviceSummary = findViewById(R.id.tvDeviceSummary);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateAccountSummary();
+        updateConnectionSummary();
     }
 
     //  Navigation
@@ -105,6 +121,11 @@ public class SettingsActivity extends AppCompatActivity {
             finish();
         });
         navSettingsItem.setOnClickListener(v -> { /* already here */ });
+        btnEditPersonalInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(this, DriverProfileSetupActivity.class);
+            intent.putExtra(DriverProfileSetupActivity.EXTRA_EDIT_MODE, true);
+            startActivity(intent);
+        });
     }
 
     // ── Thresholds
@@ -122,7 +143,6 @@ public class SettingsActivity extends AppCompatActivity {
                 tvBpmDrowsyVal.setText("< " + val + " BPM");
                 if (fromUser) {
                     ThresholdPreferences.setBpmDrowsyMax(SettingsActivity.this, val);
-                    updateStatePreview();
                 }
             }
         });
@@ -140,7 +160,6 @@ public class SettingsActivity extends AppCompatActivity {
                 tvBpmStressedVal.setText("> " + val + " BPM");
                 if (fromUser) {
                     ThresholdPreferences.setBpmStressedMin(SettingsActivity.this, val);
-                    updateStatePreview();
                 }
             }
         });
@@ -159,7 +178,6 @@ public class SettingsActivity extends AppCompatActivity {
                 tvGsrDrowsyVal.setText(String.format(Locale.getDefault(), "< %.2f", val));
                 if (fromUser) {
                     ThresholdPreferences.setGsrDrowsyMax(SettingsActivity.this, val);
-                    updateStatePreview();
                 }
             }
         });
@@ -178,7 +196,6 @@ public class SettingsActivity extends AppCompatActivity {
                 tvGsrStressedVal.setText(String.format(Locale.getDefault(), "> %.2f", val));
                 if (fromUser) {
                     ThresholdPreferences.setGsrStressedMin(SettingsActivity.this, val);
-                    updateStatePreview();
                 }
             }
         });
@@ -191,43 +208,65 @@ public class SettingsActivity extends AppCompatActivity {
             seekBpmStressed.setProgress(ThresholdPreferences.DEFAULT_BPM_STRESSED_MIN - BPM_STRESSED_MIN_OFFSET);
             seekGsrDrowsy.setProgress(Math.round(ThresholdPreferences.DEFAULT_GSR_DROWSY_MAX * 100) - GSR_DROWSY_SEEKBAR_OFFSET);
             seekGsrStressed.setProgress(Math.round(ThresholdPreferences.DEFAULT_GSR_STRESSED_MIN * 100) - GSR_STRESSED_SEEKBAR_OFFSET);
-            updateStatePreview();
         });
-
-        updateStatePreview();
     }
 
-    /**
-     * Shows a live preview of what driver state the CURRENT live sensor
-     * readings would produce with the selected thresholds.
-     */
-    private void updateStatePreview() {
-        int   avgBpm      = BleSensorPreferences.getAvgBpm(this);
-        float gsrFiltered = BleSensorPreferences.getGsrFiltered(this);
-        float gsrBaseline = BleSensorPreferences.getGsrBaseline(this);
-        // Treat baseline as ready if it's non-zero
-        boolean baselineReady = gsrBaseline > 0.01f;
+    private void populateAccountSummary() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        String state = ThresholdPreferences.classifyDriverState(
-                this, avgBpm, gsrFiltered, gsrBaseline, baselineReady);
-
-        tvStatePreview.setText("Preview: " + state);
-
-        int color;
-        switch (state) {
-            case "DROWSY":
-                color = 0xFFEF4444; // red
-                break;
-            case "STRESSED":
-                color = 0xFFF97316; // orange
-                break;
-            case "NORMAL":
-                color = 0xFF22C55E; // green
-                break;
-            default:
-                color = 0xFF94A3B8; // grey
+        if (user == null) {
+            tvDriverName.setText("Driver");
+            tvDriverEmail.setText("No email available");
+            return;
         }
-        tvStatePreview.setTextColor(color);
+        String email = user.getEmail();
+        tvDriverEmail.setText(
+                email != null && !email.trim().isEmpty()
+                        ? email
+                        : "No email available"
+        );
+
+        FirebaseFirestore.getInstance()
+                .collection("drivers")
+                .document(user.getUid())
+                .get()
+                .addOnSuccessListener(doc -> {
+                    String driverName = doc.getString("name");
+                    if (driverName != null && !driverName.trim().isEmpty()) {
+                        tvDriverName.setText(driverName);
+                    } else if (user.getDisplayName() != null && !user.getDisplayName().trim().isEmpty()) {
+                        tvDriverName.setText(user.getDisplayName());
+                    } else {
+                        tvDriverName.setText("Driver");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (user.getDisplayName() != null && !user.getDisplayName().trim().isEmpty()) {
+                        tvDriverName.setText(user.getDisplayName());
+                    } else {
+                        tvDriverName.setText("Driver");
+                    }
+                });
+    }
+
+    private void updateConnectionSummary() {
+        boolean connected = BleSensorPreferences.isConnected(this);
+        int avgBpm = BleSensorPreferences.getAvgBpm(this);
+        float gsrFiltered = BleSensorPreferences.getGsrFiltered(this);
+
+        tvDeviceStatus.setText(connected ? "Connected" : "Disconnected");
+        tvDeviceStatus.setTextColor(connected ? 0xFF22C55E : 0xFFEF4444);
+
+        if (connected) {
+            tvDeviceSummary.setText(String.format(
+                    Locale.getDefault(),
+                    "Streaming live data. Avg BPM: %d, filtered GSR: %.2f.",
+                    avgBpm,
+                    gsrFiltered
+            ));
+        } else {
+            tvDeviceSummary.setText("");
+        }
     }
 
     //  Logout

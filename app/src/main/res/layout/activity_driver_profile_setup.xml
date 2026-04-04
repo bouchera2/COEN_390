@@ -22,6 +22,7 @@
             android:orientation="horizontal">
 
             <FrameLayout
+                android:id="@+id/btnBack"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
                 android:background="@drawable/app_status_chip_bg">
@@ -43,6 +44,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvProfileSetupTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Driver Registration"
@@ -51,6 +53,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvProfileSetupSubtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -61,6 +64,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/progressSection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
@@ -84,6 +88,7 @@
         </LinearLayout>
 
         <ProgressBar
+            android:id="@+id/progressBarProfile"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="6dp"
