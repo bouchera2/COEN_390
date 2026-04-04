@@ -25,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ── Nav ──────────────────────────────────────────────────────────────────
     private View navDashboardItem;
+    private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
 
@@ -84,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
     // ────────────────────────────────────────────────────────────────────────
     private void bindViews() {
         navDashboardItem = findViewById(R.id.navDashboardItem);
+        navAlertsItem    = findViewById(R.id.navAlertsItem);
         navLogItem       = findViewById(R.id.navLogItem);
         navSettingsItem  = findViewById(R.id.navSettingsItem);
 
@@ -118,6 +120,10 @@ public class SettingsActivity extends AppCompatActivity {
         });
         navLogItem.setOnClickListener(v -> {
             startActivity(new Intent(this, DriverLogActivity.class));
+            finish();
+        });
+        navAlertsItem.setOnClickListener(v -> {
+            startActivity(new Intent(this, AlertsActivity.class));
             finish();
         });
         navSettingsItem.setOnClickListener(v -> { /* already here */ });

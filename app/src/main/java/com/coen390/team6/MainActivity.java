@@ -37,6 +37,7 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "BLE_APP";
     private static final int PERMISSION_REQUEST_CODE = 1001;
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1002;
     private static final String TARGET_DEVICE_NAME = "esp32_bracelet_test";
     private static final UUID SERVICE_UUID = UUID.fromString("12345678-1234-1234-1234-1234567890ab");
     private static final UUID CHARACTERISTIC_UUID = UUID.fromString("abcd1234-1234-1234-1234-1234567890ab");
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         btnScanConnect = findViewById(R.id.btnScan);
         tvStatus = findViewById(R.id.tvStatus);
         BleSensorPreferences.setConnected(this, false);
+        requestNotificationPermissionIfNeeded();
 
         BluetoothManager bluetoothManager = getSystemService(BluetoothManager.class);
         bluetoothAdapter = bluetoothManager != null ? bluetoothManager.getAdapter() : null;
@@ -145,6 +147,23 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    private void requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+        );
     }
 
     private void startScanAndConnect() {
@@ -296,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // 4. Sauvegarde normalement — même pipeline qu'avant
                 BleSensorPreferences.saveSensorData(MainActivity.this, sensorData);
+                AlertMonitor.processSensorState(MainActivity.this, sensorData);
                 firestoreRepository.saveSensorReading(sensorData);
 
                 runOnUiThread(() -> updateStatus(buildConnectedStatus(sensorData), android.R.color.holo_green_dark));

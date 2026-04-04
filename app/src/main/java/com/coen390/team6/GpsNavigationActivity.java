@@ -67,6 +67,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
     private Button btnZoomIn, btnZoomOut, btnMyLocation;
     private LinearLayout directionBanner, routeInfoPanel, timeLeftPanel;
     private View fatigueStatusCard;
+    private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
     private TextView tvArrivalTime, tvArrivalAmPm, tvDistanceValue, tvRouteName;
@@ -115,6 +116,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         routeInfoPanel = findViewById(R.id.routeInfoPanel);
         timeLeftPanel = findViewById(R.id.timeLeftPanel);
         fatigueStatusCard = findViewById(R.id.fatigueStatusCard);
+        navAlertsItem = findViewById(R.id.navAlertsItem);
         navLogItem = findViewById(R.id.navLogItem);
         navSettingsItem = findViewById(R.id.navSettingsItem);
         tvArrivalTime = findViewById(R.id.tvArrivalTime);
@@ -171,6 +173,9 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
 
         fatigueStatusCard.setOnClickListener(v ->
                 startActivity(new Intent(this, DashboardActivity.class)));
+
+        navAlertsItem.setOnClickListener(v ->
+                startActivity(new Intent(this, AlertsActivity.class)));
 
         navLogItem.setOnClickListener(v ->
                 startActivity(new Intent(this, DriverLogActivity.class)));

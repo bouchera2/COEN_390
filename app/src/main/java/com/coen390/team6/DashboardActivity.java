@@ -44,6 +44,7 @@ public class DashboardActivity extends AppCompatActivity {
     private View[] heartRateBars;
     private View batteryChip;
     private View navDashboardItem;
+    private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
     private final Handler sensorRefreshHandler = new Handler(Looper.getMainLooper());
@@ -90,6 +91,7 @@ public class DashboardActivity extends AppCompatActivity {
         dashboardToolbar = findViewById(R.id.dashboardToolbar);
         batteryChip = findViewById(R.id.batteryChip);
         navDashboardItem = findViewById(R.id.navDashboardItem);
+        navAlertsItem = findViewById(R.id.navAlertsItem);
         navLogItem = findViewById(R.id.navLogItem);
         navSettingsItem = findViewById(R.id.navSettingsItem);
         heartRateBars = new View[]{
@@ -131,6 +133,13 @@ public class DashboardActivity extends AppCompatActivity {
             navLogItem.setOnClickListener(v -> {
                 Intent intent = new Intent(DashboardActivity.this, DriverLogActivity.class);
                 startActivity(intent);
+                finish();
+            });
+        }
+
+        if (navAlertsItem != null) {
+            navAlertsItem.setOnClickListener(v -> {
+                startActivity(new Intent(this, AlertsActivity.class));
                 finish();
             });
         }

@@ -39,6 +39,7 @@ public class DriverLogActivity extends AppCompatActivity {
     private static final int UNSELECTED_STROKE_WIDTH_DP = 2;
 
     private View navDashboardItem;
+    private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
     private TextView tabHistory;
@@ -118,6 +119,7 @@ public class DriverLogActivity extends AppCompatActivity {
 
     private void bindViews() {
         navDashboardItem = findViewById(R.id.navDashboardItem);
+        navAlertsItem = findViewById(R.id.navAlertsItem);
         navLogItem = findViewById(R.id.navLogItem);
         navSettingsItem = findViewById(R.id.navSettingsItem);
         tabHistory = findViewById(R.id.tabHistory);
@@ -148,6 +150,12 @@ public class DriverLogActivity extends AppCompatActivity {
 
         navLogItem.setOnClickListener(v -> {
             // Already on the log tab.
+        });
+
+        navAlertsItem.setOnClickListener(v -> {
+            Intent intent = new Intent(DriverLogActivity.this, AlertsActivity.class);
+            startActivity(intent);
+            finish();
         });
 
         navSettingsItem.setOnClickListener(v -> {
