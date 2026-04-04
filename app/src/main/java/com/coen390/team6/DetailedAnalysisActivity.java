@@ -1,6 +1,9 @@
 package com.coen390.team6;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -13,24 +16,56 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class DetailedAnalysisActivity extends AppCompatActivity {
 
     private static final String TAG = "DetailedAnalysis";
 
-    // Live section
-    private TextView tvLiveBpm, tvLiveFinger, tvLiveSudden,
-            tvLiveMotionAccel, tvLiveGyro, tvLiveAx, tvLiveAy, tvLiveAz;
+    // ── Driver State card
+    private TextView tvDriverState;
+    private TextView tvDriverStateDesc;
 
-    // Last saved section
-    private TextView tvLastBpm, tvLastSudden, tvLastMotionAccel,
-            tvLastGyro, tvLastAx, tvLastAy, tvLastAz, tvLastTimestamp;
+    // ── Fatigue Score card
+    private TextView tvFatigueScore;
+    private TextView tvFatigueLabel;
+    private android.widget.ProgressBar progressFatigue;
 
-    // Stats section
-    private TextView tvAvgBpm, tvMinBpm, tvMaxBpm, tvReadingCount;
+    // ── Vitals card
+    private TextView tvLiveBpm;
+    private TextView tvLiveFinger;
+    private TextView tvLiveSudden;
+    private TextView tvLiveCrash;
 
+    // ── Fatigue chart (canvas view)
+    private FatigueChartView fatigueChartView;
+
+    // ── Stats
+    private TextView tvAvgBpm;
+    private TextView tvMinBpm;
+    private TextView tvMaxBpm;
+    private TextView tvReadingCount;
+    private TextView tvLastTimestamp;
+
+    //  Live fatigue history (in-memory for current session)
+    private final List<Float> liveScores      = new ArrayList<>();
+    private final List<Long>  liveTimestamps  = new ArrayList<>();
+    private static final int  MAX_LIVE_POINTS = 30;
+
+    // Auto-refresh
+    private final Handler refreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable refreshRunnable = new Runnable() {
+        @Override public void run() {
+            loadLiveData();
+            refreshHandler.postDelayed(this, 1000);
+        }
+    };
+
+    // =========================================================================
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemePreferenceManager.applySavedNightMode(this);
@@ -44,60 +79,166 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 
-    @Override
-    protected void onResume() {
+    @Override protected void onResume() {
         super.onResume();
         loadLiveData();
+        loadFirestoreData();
+        refreshHandler.post(refreshRunnable);
     }
 
+    @Override protected void onPause() {
+        refreshHandler.removeCallbacks(refreshRunnable);
+        super.onPause();
+    }
+
+    // ── Bind
     private void bindViews() {
+        tvDriverState     = findViewById(R.id.tvDriverState);
+        tvDriverStateDesc = findViewById(R.id.tvDriverStateDesc);
+
+        tvFatigueScore    = findViewById(R.id.tvFatigueScore);
+        tvFatigueLabel    = findViewById(R.id.tvFatigueLabel);
+        progressFatigue   = findViewById(R.id.progressFatigue);
+
         tvLiveBpm         = findViewById(R.id.tvLiveBpm);
         tvLiveFinger      = findViewById(R.id.tvLiveFinger);
         tvLiveSudden      = findViewById(R.id.tvLiveSudden);
-        tvLiveMotionAccel = findViewById(R.id.tvLiveMotionAccel);
-        tvLiveGyro        = findViewById(R.id.tvLiveGyro);
-        tvLiveAx          = findViewById(R.id.tvLiveAx);
-        tvLiveAy          = findViewById(R.id.tvLiveAy);
-        tvLiveAz          = findViewById(R.id.tvLiveAz);
+        tvLiveCrash       = findViewById(R.id.tvLiveCrash);
 
-        tvLastBpm         = findViewById(R.id.tvLastBpm);
-        tvLastSudden      = findViewById(R.id.tvLastSudden);
-        tvLastMotionAccel = findViewById(R.id.tvLastMotionAccel);
-        tvLastGyro        = findViewById(R.id.tvLastGyro);
-        tvLastAx          = findViewById(R.id.tvLastAx);
-        tvLastAy          = findViewById(R.id.tvLastAy);
-        tvLastAz          = findViewById(R.id.tvLastAz);
+        fatigueChartView  = findViewById(R.id.fatigueChartView);
+
+        tvAvgBpm          = findViewById(R.id.tvAvgBpm);
+        tvMinBpm          = findViewById(R.id.tvMinBpm);
+        tvMaxBpm          = findViewById(R.id.tvMaxBpm);
+        tvReadingCount    = findViewById(R.id.tvReadingCount);
         tvLastTimestamp   = findViewById(R.id.tvLastTimestamp);
-
-        tvAvgBpm       = findViewById(R.id.tvAvgBpm);
-        tvMinBpm       = findViewById(R.id.tvMinBpm);
-        tvMaxBpm       = findViewById(R.id.tvMaxBpm);
-        tvReadingCount = findViewById(R.id.tvReadingCount);
     }
 
+    // ── Live data (SharedPrefs, refreshed every second)
     private void loadLiveData() {
-        boolean finger = BleSensorPreferences.isFingerDetected(this);
-        int avgBpm     = BleSensorPreferences.getAvgBpm(this);
-        float bpm      = BleSensorPreferences.getBpm(this);
-        boolean sudden = BleSensorPreferences.hasSuddenMovement(this);
-        float accel    = BleSensorPreferences.getMotionAccel(this);
-        float gyro     = BleSensorPreferences.getGyroMag(this);
-        float ax       = BleSensorPreferences.getAx(this);
-        float ay       = BleSensorPreferences.getAy(this);
-        float az       = BleSensorPreferences.getAz(this);
+        boolean finger     = BleSensorPreferences.isFingerDetected(this);
+        int     avgBpm     = BleSensorPreferences.getAvgBpm(this);
+        float   bpm        = BleSensorPreferences.getBpm(this);
+        boolean sudden     = BleSensorPreferences.hasSuddenMovement(this);
+        boolean crash      = BleSensorPreferences.isPossibleCrash(this);
+        float   gsrF       = BleSensorPreferences.getGsrFiltered(this);
+        float   gsrB       = BleSensorPreferences.getGsrBaseline(this);
+        String  state      = BleSensorPreferences.getDriverState(this);
 
         int displayBpm = avgBpm > 0 ? avgBpm : Math.round(bpm);
 
-        tvLiveBpm.setText(finger && displayBpm > 0 ? displayBpm + " BPM" : "--");
+        // ── Vitals
         tvLiveFinger.setText(finger ? "✓ Detected" : "✗ Not detected");
+        tvLiveFinger.setTextColor(finger ? Color.parseColor("#22C55E") : Color.parseColor("#EF4444"));
+
+        tvLiveBpm.setText(finger && displayBpm > 0 ? displayBpm + " BPM" : "--");
+
         tvLiveSudden.setText(sudden ? "⚠ YES" : "No");
-        tvLiveMotionAccel.setText(String.format(Locale.getDefault(), "%.2f m/s²", accel));
-        tvLiveGyro.setText(String.format(Locale.getDefault(), "%.2f rad/s", gyro));
-        tvLiveAx.setText(String.format(Locale.getDefault(), "%.2f", ax));
-        tvLiveAy.setText(String.format(Locale.getDefault(), "%.2f", ay));
-        tvLiveAz.setText(String.format(Locale.getDefault(), "%.2f", az));
+        tvLiveSudden.setTextColor(sudden ? Color.parseColor("#EF4444") : Color.parseColor("#22C55E"));
+
+        tvLiveCrash.setText(crash ? "⚠ INCIDENT DETECTED" : "No incident");
+        tvLiveCrash.setTextColor(crash ? Color.parseColor("#EF4444") : Color.parseColor("#22C55E"));
+
+        // ── Driver State
+        applyDriverState(state);
+
+        // ── Fatigue Score
+        float score = computeFatigueScore(displayBpm, gsrF, gsrB);
+        applyFatigueScore(score);
+
+        // ── Add to live chart history
+        if (finger && displayBpm > 0) {
+            liveScores.add(score);
+            liveTimestamps.add(System.currentTimeMillis());
+            if (liveScores.size() > MAX_LIVE_POINTS) {
+                liveScores.remove(0);
+                liveTimestamps.remove(0);
+            }
+            fatigueChartView.setLiveData(liveScores, liveTimestamps);
+        }
     }
 
+    // ── Fatigue score formula
+    private float computeFatigueScore(int bpm, float gsrFiltered, float gsrBaseline) {
+        if (bpm <= 0) return 0f;
+
+        // BPM component
+        float bpmScore;
+        if (bpm <= 50)      bpmScore = 100f;
+        else if (bpm < 70)  bpmScore = (70f - bpm) * 5f;
+        else                bpmScore = 0f;
+
+        // GSR component
+        float gsrScore = 0f;
+        if (gsrBaseline > 0.01f) {
+            float gsrRatio = gsrFiltered / gsrBaseline;
+            if (gsrRatio <= 0.7f)      gsrScore = 100f;
+            else if (gsrRatio < 1.0f)  gsrScore = (1.0f - gsrRatio) * 100f / 0.3f;
+            else                       gsrScore = 0f;
+        }
+
+        float score = 0.6f * bpmScore + 0.4f * gsrScore;
+        return Math.max(0f, Math.min(100f, score));
+    }
+
+    // ── Apply fatigue score to UI
+    private void applyFatigueScore(float score) {
+        int scoreInt = Math.round(score);
+        tvFatigueScore.setText(String.valueOf(scoreInt));
+        progressFatigue.setProgress(scoreInt);
+
+        int color;
+        String label;
+        if (score < 30) {
+            color = Color.parseColor("#22C55E"); // green
+            label = "Normal";
+        } else if (score < 60) {
+            color = Color.parseColor("#F97316"); // orange
+            label = "Fatigued";
+        } else {
+            color = Color.parseColor("#EF4444"); // red
+            label = "Drowsy";
+        }
+        tvFatigueScore.setTextColor(color);
+        tvFatigueLabel.setText(label);
+        tvFatigueLabel.setTextColor(color);
+        progressFatigue.getProgressDrawable().setColorFilter(
+                color, android.graphics.PorterDuff.Mode.SRC_IN);
+    }
+
+    // ── Apply driver state to UI
+    private void applyDriverState(String state) {
+        if (state == null) state = "UNKNOWN";
+        tvDriverState.setText(state);
+        String desc;
+        int color;
+        switch (state) {
+            case "DROWSY":
+                color = Color.parseColor("#EF4444");
+                desc  = "Low heart rate & low GSR — driver may be falling asleep";
+                break;
+            case "STRESSED":
+                color = Color.parseColor("#F97316");
+                desc  = "Elevated heart rate & GSR — driver under stress";
+                break;
+            case "NORMAL":
+                color = Color.parseColor("#22C55E");
+                desc  = "Heart rate and GSR within normal range";
+                break;
+            case "CALIBRATING":
+                color = Color.parseColor("#94A3B8");
+                desc  = "Calibrating GSR baseline… please wait";
+                break;
+            default:
+                color = Color.parseColor("#94A3B8");
+                desc  = "No data";
+        }
+        tvDriverState.setTextColor(color);
+        tvDriverStateDesc.setText(desc);
+        tvDriverStateDesc.setTextColor(color);
+    }
+
+    // ── Firestore: last saved + stats + historical chart
     private void loadFirestoreData() {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -110,39 +251,22 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(query -> {
                     if (query.isEmpty()) {
-                        tvLastBpm.setText("No data yet");
                         tvReadingCount.setText("0 readings");
                         return;
                     }
                     populateLastReading((QueryDocumentSnapshot) query.getDocuments().get(0));
                     computeStats(query);
+                    buildHistoricalChart(query);
                 })
                 .addOnFailureListener(e -> Log.e(TAG, "Firestore error: " + e.getMessage()));
     }
 
     private void populateLastReading(QueryDocumentSnapshot doc) {
-        Long bpm       = doc.getLong("bpm");
-        Boolean sudden = doc.getBoolean("suddenMovement");
-        Double accel   = doc.getDouble("motionAccel");
-        Double gyro    = doc.getDouble("gyroMag");
-        Double ax      = doc.getDouble("ax");
-        Double ay      = doc.getDouble("ay");
-        Double az      = doc.getDouble("az");
-        Long ts        = doc.getLong("timestamp");
-
-        tvLastBpm.setText(bpm != null ? bpm + " BPM" : "--");
-        tvLastSudden.setText(Boolean.TRUE.equals(sudden) ? "⚠ YES" : "No");
-        tvLastMotionAccel.setText(accel != null
-                ? String.format(Locale.getDefault(), "%.2f m/s²", accel) : "--");
-        tvLastGyro.setText(gyro != null
-                ? String.format(Locale.getDefault(), "%.2f rad/s", gyro) : "--");
-        tvLastAx.setText(ax != null ? String.format(Locale.getDefault(), "%.2f", ax) : "--");
-        tvLastAy.setText(ay != null ? String.format(Locale.getDefault(), "%.2f", ay) : "--");
-        tvLastAz.setText(az != null ? String.format(Locale.getDefault(), "%.2f", az) : "--");
-
+        Long ts = doc.getLong("timestamp");
         if (ts != null) {
-            tvLastTimestamp.setText(new SimpleDateFormat("MMM dd, HH:mm:ss", Locale.getDefault())
-                    .format(new Date(ts)));
+            tvLastTimestamp.setText("Last saved: " +
+                    new SimpleDateFormat("MMM dd, HH:mm:ss", Locale.getDefault())
+                            .format(new Date(ts)));
         }
     }
 
@@ -160,5 +284,31 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         tvAvgBpm.setText(count > 0 ? sum / count + " BPM" : "--");
         tvMinBpm.setText(count > 0 ? min + " BPM" : "--");
         tvMaxBpm.setText(count > 0 ? max + " BPM" : "--");
+    }
+
+    private void buildHistoricalChart(QuerySnapshot query) {
+        List<Float> scores     = new ArrayList<>();
+        List<Long>  timestamps = new ArrayList<>();
+
+        // Docs are DESC — reverse to get chronological order
+        List<DocumentSnapshot> docs = new ArrayList<>(query.getDocuments());
+        Collections.reverse(docs);
+
+        for (DocumentSnapshot doc : docs) {
+            Long bpmL = doc.getLong("bpm");
+            Double gsrF = doc.getDouble("gsrFiltered");
+            Double gsrB = doc.getDouble("gsrBaseline");
+            Long ts     = doc.getLong("timestamp");
+            if (bpmL == null || ts == null) continue;
+
+            float score = computeFatigueScore(
+                    bpmL.intValue(),
+                    gsrF != null ? gsrF.floatValue() : 0f,
+                    gsrB != null ? gsrB.floatValue() : 0f
+            );
+            scores.add(score);
+            timestamps.add(ts);
+        }
+        fatigueChartView.setHistoricalData(scores, timestamps);
     }
 }
