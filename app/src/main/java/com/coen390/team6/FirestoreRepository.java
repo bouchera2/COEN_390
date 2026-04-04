@@ -8,19 +8,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Handles all Firestore writes for sensor data.
- * Call saveSensorReading() from MainActivity's onCharacteristicChanged.
- */
 public final class FirestoreRepository {
-    private static final String TAG = "FirestoreRepo";
+    private static final String TAG        = "FirestoreRepo";
     private static final String COLLECTION = "sensor_readings";
+    private static final long SAVE_INTERVAL_MS = 15_000;
 
     private final FirebaseFirestore db;
     private final FirebaseAuth auth;
-
-    // Throttle — save at most once every 15 seconds
-    private static final long SAVE_INTERVAL_MS = 15_000;
     private long lastSaveTime = 0;
 
     public FirestoreRepository() {
@@ -28,10 +22,6 @@ public final class FirestoreRepository {
         this.auth = FirebaseAuth.getInstance();
     }
 
-    /**
-     * Saves a sensor reading to Firestore if the user is logged in,
-     * finger is detected, BPM is valid, and throttle interval has passed.
-     */
     public void saveSensorReading(BleSensorData data) {
         if (auth.getCurrentUser() == null) {
             Log.w(TAG, "No user logged in, skipping save");
@@ -65,10 +55,18 @@ public final class FirestoreRepository {
         reading.put("ay",             data.getAy());
         reading.put("az",             data.getAz());
 
+        // GSR + Driver State
+        reading.put("gsrFiltered",   data.getGsrFiltered());
+        reading.put("gsrBaseline",   data.getGsrBaseline());
+        reading.put("driverState",   data.getDriverState());
+        reading.put("possibleCrash", data.isPossibleCrash());
+
         db.collection(COLLECTION)
                 .add(reading)
                 .addOnSuccessListener(ref ->
-                        Log.d(TAG, "Saved reading: bpm=" + bpm + " sudden=" + data.isSuddenMovement()))
+                        Log.d(TAG, "Saved: bpm=" + bpm
+                                + " state=" + data.getDriverState()
+                                + " crash=" + data.isPossibleCrash()))
                 .addOnFailureListener(e ->
                         Log.e(TAG, "Firestore write failed: " + e.getMessage()));
     }

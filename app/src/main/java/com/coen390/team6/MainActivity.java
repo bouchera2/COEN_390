@@ -272,12 +272,30 @@ public class MainActivity extends AppCompatActivity {
             public void onCharacteristicChanged(@NonNull BluetoothGatt gatt, @NonNull BluetoothGattCharacteristic characteristic) {
                 super.onCharacteristicChanged(gatt, characteristic);
                 final String value = new String(characteristic.getValue(), StandardCharsets.UTF_8);
-                BleSensorData sensorData = BleSensorData.fromPayload(value);
+
+                // 1. Parse le paquet brut de l'Arduino
+                BleSensorData raw = BleSensorData.fromPayload(value);
+
+                // 2. Reclassifie le driverState avec les thresholds réglés dans Settings
+                //    (ignore le "ds=..." envoyé par l'Arduino)
+                boolean baselineReady = raw.getGsrBaseline() > 0.01f;
+                String appState = ThresholdPreferences.classifyDriverState(
+                        MainActivity.this,
+                        raw.getAvgBpm(),
+                        raw.getGsrFiltered(),
+                        raw.getGsrBaseline(),
+                        baselineReady
+                );
+
+                // 3. Crée une copie avec le driverState de l'app
+                BleSensorData sensorData = raw.withDriverState(appState);
+
+                // 4. Sauvegarde normalement — même pipeline qu'avant
                 BleSensorPreferences.saveSensorData(MainActivity.this, sensorData);
                 firestoreRepository.saveSensorReading(sensorData);
 
                 runOnUiThread(() -> updateStatus(buildConnectedStatus(sensorData), android.R.color.holo_green_dark));
-                Log.d(TAG, "Value received: " + value);
+                Log.d(TAG, "Value received: " + value + " → state=" + appState);
             }
         });
     }
