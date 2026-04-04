@@ -16,13 +16,28 @@ public final class DriverFatigueStatus {
     private final String label;
     private final String emoji;
     private final String scoreText;
+    private final String dashboardTitle;
+    private final String dashboardDescription;
+    private final int riskPercent;
     private final int accentColor;
 
-    private DriverFatigueStatus(Level level, String label, String emoji, String scoreText, int accentColor) {
+    private DriverFatigueStatus(
+            Level level,
+            String label,
+            String emoji,
+            String scoreText,
+            String dashboardTitle,
+            String dashboardDescription,
+            int riskPercent,
+            int accentColor
+    ) {
         this.level = level;
         this.label = label;
         this.emoji = emoji;
         this.scoreText = scoreText;
+        this.dashboardTitle = dashboardTitle;
+        this.dashboardDescription = dashboardDescription;
+        this.riskPercent = riskPercent;
         this.accentColor = accentColor;
     }
 
@@ -72,19 +87,67 @@ public final class DriverFatigueStatus {
         return accentColor;
     }
 
+    public String getDashboardTitle() {
+        return dashboardTitle;
+    }
+
+    public String getDashboardDescription() {
+        return dashboardDescription;
+    }
+
+    public int getRiskPercent() {
+        return riskPercent;
+    }
+
     private static DriverFatigueStatus low() {
-        return new DriverFatigueStatus(Level.LOW, "Low", "🙂", "92/100", Color.parseColor("#22C55E"));
+        return new DriverFatigueStatus(
+                Level.LOW,
+                "Low",
+                "🙂",
+                "92/100",
+                "Fatigue Risk: Low",
+                "Optimal condition for driving.",
+                15,
+                Color.parseColor("#22C55E")
+        );
     }
 
     private static DriverFatigueStatus medium() {
-        return new DriverFatigueStatus(Level.MEDIUM, "Moderate", "😐", "64/100", Color.parseColor("#F59E0B"));
+        return new DriverFatigueStatus(
+                Level.MEDIUM,
+                "Moderate",
+                "😐",
+                "64/100",
+                "Fatigue Risk: Moderate",
+                "Monitor the driver and plan a break soon.",
+                55,
+                Color.parseColor("#F59E0B")
+        );
     }
 
     private static DriverFatigueStatus high() {
-        return new DriverFatigueStatus(Level.HIGH, "High", "☹", "28/100", Color.parseColor("#EF4444"));
+        return new DriverFatigueStatus(
+                Level.HIGH,
+                "High",
+                "☹",
+                "28/100",
+                "Fatigue Risk: High",
+                "Critical state detected. Stop driving and rest.",
+                85,
+                Color.parseColor("#EF4444")
+        );
     }
 
     private static DriverFatigueStatus waiting() {
-        return new DriverFatigueStatus(Level.WAITING, "Waiting", "•", "--/100", Color.parseColor("#94A3B8"));
+        return new DriverFatigueStatus(
+                Level.WAITING,
+                "Waiting",
+                "•",
+                "--/100",
+                "Fatigue Risk: Waiting",
+                "Waiting for enough sensor data to estimate risk.",
+                0,
+                Color.parseColor("#94A3B8")
+        );
     }
 }

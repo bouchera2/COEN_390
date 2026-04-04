@@ -403,6 +403,9 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
                     etSearch.setVisibility(View.GONE);
 
                     isNavigating = true;
+                    if (!DrivingSessionPreferences.isActive(this)) {
+                        DrivingSessionPreferences.start(this, System.currentTimeMillis());
+                    }
                 });
 
             } catch (Exception e) {
@@ -414,6 +417,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
 
     private void exitNavigation() {
         isNavigating = false;
+        DrivingSessionPreferences.stop(this);
         if (currentRoute != null) currentRoute.remove();
         mMap.clear();
 
