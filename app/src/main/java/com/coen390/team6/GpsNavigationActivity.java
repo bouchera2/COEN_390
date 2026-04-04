@@ -1,10 +1,12 @@
 package com.coen390.team6;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
@@ -64,11 +66,23 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
     private Button btnBack, btnStartRoute, btnExitRoute, btnRoutes;
     private Button btnZoomIn, btnZoomOut, btnMyLocation;
     private LinearLayout directionBanner, routeInfoPanel, timeLeftPanel;
+    private View fatigueStatusCard;
+    private View navLogItem;
+    private View navSettingsItem;
     private TextView tvArrivalTime, tvArrivalAmPm, tvDistanceValue, tvRouteName;
     private TextView tvTimeLeft, tvTimeLeftUnit, tvTrafficStatus;
     private TextView tvDirectionText, tvDirectionDetail, tvDistance;
+    private TextView tvFatigueEmoji, tvFatigueScore, tvGpsHeartRate;
 
     private boolean isNavigating = false;
+    private final Handler sensorRefreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable sensorRefreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            refreshDriverOverlay();
+            sensorRefreshHandler.postDelayed(this, 1000);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +114,9 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         directionBanner = findViewById(R.id.directionBanner);
         routeInfoPanel = findViewById(R.id.routeInfoPanel);
         timeLeftPanel = findViewById(R.id.timeLeftPanel);
+        fatigueStatusCard = findViewById(R.id.fatigueStatusCard);
+        navLogItem = findViewById(R.id.navLogItem);
+        navSettingsItem = findViewById(R.id.navSettingsItem);
         tvArrivalTime = findViewById(R.id.tvArrivalTime);
         tvArrivalAmPm = findViewById(R.id.tvArrivalAmPm);
         tvDistanceValue = findViewById(R.id.tvDistanceValue);
@@ -110,6 +127,9 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         tvDirectionText = findViewById(R.id.tvDirectionText);
         tvDirectionDetail = findViewById(R.id.tvDirectionDetail);
         tvDistance = findViewById(R.id.tvDistance);
+        tvFatigueEmoji = findViewById(R.id.tvFatigueEmoji);
+        tvFatigueScore = findViewById(R.id.tvFatigueScore);
+        tvGpsHeartRate = findViewById(R.id.tvGpsHeartRate);
     }
 
     private void setupListeners() {
@@ -124,7 +144,9 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
             return false;
         });
 
-        btnBack.setOnClickListener(v -> finish());
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
 
         btnStartRoute.setOnClickListener(v -> {
             String destination = etSearch.getText().toString().trim();
@@ -146,6 +168,15 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         });
 
         btnMyLocation.setOnClickListener(v -> centerOnMyLocation());
+
+        fatigueStatusCard.setOnClickListener(v ->
+                startActivity(new Intent(this, DashboardActivity.class)));
+
+        navLogItem.setOnClickListener(v ->
+                startActivity(new Intent(this, DriverLogActivity.class)));
+
+        navSettingsItem.setOnClickListener(v ->
+                startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     @Override
@@ -235,6 +266,23 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         if (currentLocation != null && mMap != null) {
             LatLng myPos = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPos, 16f));
+        }
+    }
+
+    private void refreshDriverOverlay() {
+        DriverFatigueStatus fatigueStatus = DriverFatigueStatus.from(this);
+        tvFatigueEmoji.setText(fatigueStatus.getEmoji());
+        tvFatigueScore.setText(fatigueStatus.getScoreText());
+        tvFatigueScore.setTextColor(fatigueStatus.getAccentColor());
+
+        boolean fingerDetected = BleSensorPreferences.isFingerDetected(this);
+        int avgBpm = BleSensorPreferences.getAvgBpm(this);
+        float bpm = BleSensorPreferences.getBpm(this);
+        if (!fingerDetected) {
+            tvGpsHeartRate.setText("--");
+        } else {
+            int displayBpm = avgBpm > 0 ? avgBpm : Math.round(bpm);
+            tvGpsHeartRate.setText(displayBpm > 0 ? String.valueOf(displayBpm) : "--");
         }
     }
 
@@ -433,6 +481,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
 
     @Override
     protected void onPause() {
+        sensorRefreshHandler.removeCallbacks(sensorRefreshRunnable);
         super.onPause();
         if (fusedLocationClient != null && locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
@@ -442,6 +491,8 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
     @Override
     protected void onResume() {
         super.onResume();
+        refreshDriverOverlay();
+        sensorRefreshHandler.post(sensorRefreshRunnable);
         if (checkLocationPermission() && mMap != null) {
             enableMyLocation();
         }

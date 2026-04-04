@@ -141,7 +141,7 @@ public class DriverLogActivity extends AppCompatActivity {
 
     private void bindNavigation() {
         navDashboardItem.setOnClickListener(v -> {
-            Intent intent = new Intent(DriverLogActivity.this, DashboardActivity.class);
+            Intent intent = new Intent(DriverLogActivity.this, GpsNavigationActivity.class);
             startActivity(intent);
             finish();
         });

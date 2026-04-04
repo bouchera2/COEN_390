@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.TextView;
-import android.graphics.Color;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -83,8 +82,15 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void bindNavigation() {
+        dashboardToolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
+        dashboardToolbar.setNavigationOnClickListener(v -> {
+            startActivity(new Intent(this, GpsNavigationActivity.class));
+            finish();
+        });
+
         navDashboardItem.setOnClickListener(v -> {
-            // Already on the dashboard tab.
+            startActivity(new Intent(this, GpsNavigationActivity.class));
+            finish();
         });
 
         navLogItem.setOnClickListener(v -> {
@@ -113,52 +119,15 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void refreshSensorData() {
         boolean isConnected = BleSensorPreferences.isConnected(this);
-        boolean fingerDetected = BleSensorPreferences.isFingerDetected(this);
         int avgBpm = BleSensorPreferences.getAvgBpm(this);
         float bpm = BleSensorPreferences.getBpm(this);
-        boolean suddenMovement = BleSensorPreferences.hasSuddenMovement(this);
+        DriverFatigueStatus fatigueStatus = DriverFatigueStatus.from(this);
 
-        heartRateText.setText(formatHeartRate(fingerDetected, avgBpm, bpm));
+        heartRateText.setText(formatHeartRate(BleSensorPreferences.isFingerDetected(this), avgBpm, bpm));
         bluetoothText.setText(isConnected ? getString(R.string.connected) : getString(R.string.bt_status_disconnected));
         batteryText.setText(getString(R.string.battery_value_unavailable));
-
-        if (!isConnected) {
-            fatigueText.setText(getString(R.string.fatigue_value_waiting));
-            fatigueText.setTextColor(Color.parseColor("#64748B"));
-            return;
-        }
-
-        if (!fingerDetected) {
-            fatigueText.setText(getString(R.string.fatigue_value_waiting));
-            fatigueText.setTextColor(Color.parseColor("#64748B"));
-            return;
-        }
-
-        if (suddenMovement) {
-            fatigueText.setText(getString(R.string.fatigue_value_high));
-            fatigueText.setTextColor(Color.parseColor("#D32F2F"));
-            return;
-        }
-
-        int displayBpm = avgBpm > 0 ? avgBpm : Math.round(bpm);
-        int fatigueThreshold = DriverProfilePreferences.getFatigueHrThreshold(this);
-        int normalLow = DriverProfilePreferences.getNormalHrLow(this);
-        int normalHigh = DriverProfilePreferences.getNormalHrHigh(this);
-        int stressThreshold = DriverProfilePreferences.getStressHrThreshold(this);
-
-        if (displayBpm <= fatigueThreshold) {
-            fatigueText.setText(getString(R.string.fatigue_value_high));
-            fatigueText.setTextColor(Color.parseColor("#D32F2F"));
-        } else if (displayBpm >= stressThreshold) {
-            fatigueText.setText(getString(R.string.fatigue_value_high));
-            fatigueText.setTextColor(Color.parseColor("#D32F2F"));
-        } else if (displayBpm < normalLow || displayBpm > normalHigh) {
-            fatigueText.setText(getString(R.string.fatigue_value_medium));
-            fatigueText.setTextColor(Color.parseColor("#F57C00"));
-        } else {
-            fatigueText.setText(getString(R.string.fatigue_value_placeholder));
-            fatigueText.setTextColor(Color.parseColor("#4CAF50"));
-        }
+        fatigueText.setText(fatigueStatus.getLabel());
+        fatigueText.setTextColor(fatigueStatus.getAccentColor());
     }
 
     private String formatHeartRate(boolean fingerDetected, int avgBpm, float bpm) {

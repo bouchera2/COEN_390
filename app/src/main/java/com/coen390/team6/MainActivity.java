@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private int reconnectDelay = 2000;
     private boolean shouldReconnect = true;
     private boolean isScanning = false;
+    private boolean hasOpenedGps;
 
     private final ScanCallback scanCallback = new ScanCallback() {
         @Override
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         btnDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+                Intent intent = new Intent(MainActivity.this, GpsNavigationActivity.class);
                 startActivity(intent);
             }
         });
@@ -203,7 +204,10 @@ public class MainActivity extends AppCompatActivity {
                     reconnectDelay = 2000;
                     BleSensorPreferences.setConnected(MainActivity.this, true);
 
-                    runOnUiThread(() -> updateStatus("Status: Connected", android.R.color.holo_green_dark));
+                    runOnUiThread(() -> {
+                        updateStatus("Status: Connected", android.R.color.holo_green_dark);
+                        openGpsHome();
+                    });
 
                     gatt.discoverServices();
 
@@ -339,6 +343,18 @@ public class MainActivity extends AppCompatActivity {
     private void updateStatus(String statusText, int colorRes) {
         tvStatus.setText(statusText);
         tvStatus.setTextColor(getResources().getColor(colorRes));
+    }
+
+    private void openGpsHome() {
+        if (hasOpenedGps) {
+            return;
+        }
+
+        hasOpenedGps = true;
+        Intent intent = new Intent(this, GpsNavigationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
