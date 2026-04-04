@@ -1,6 +1,8 @@
 package com.coen390.team6;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +10,7 @@ import android.os.Looper;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,6 +25,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class DashboardActivity extends AppCompatActivity {
 
     private TextView heartRateText, fatigueText, bluetoothText, batteryText;
@@ -33,7 +40,9 @@ public class DashboardActivity extends AppCompatActivity {
     private MaterialToolbar dashboardToolbar;
     private CircularProgressIndicator fatigueGauge;
     private ProgressBar drivingTimeProgress;
+    private ImageView routeSnapshotImage;
     private View[] heartRateBars;
+    private View batteryChip;
     private View navDashboardItem;
     private View navLogItem;
     private View navSettingsItem;
@@ -77,7 +86,9 @@ public class DashboardActivity extends AppCompatActivity {
         drivingTimeText = findViewById(R.id.drivingTimeText);
         drivingTimeUnitText = findViewById(R.id.drivingTimeUnitText);
         drivingTimeProgress = findViewById(R.id.drivingTimeProgress);
+        routeSnapshotImage = findViewById(R.id.routeSnapshotImage);
         dashboardToolbar = findViewById(R.id.dashboardToolbar);
+        batteryChip = findViewById(R.id.batteryChip);
         navDashboardItem = findViewById(R.id.navDashboardItem);
         navLogItem = findViewById(R.id.navLogItem);
         navSettingsItem = findViewById(R.id.navSettingsItem);
@@ -159,6 +170,9 @@ public class DashboardActivity extends AppCompatActivity {
         }
         if (bluetoothText != null) {
             bluetoothText.setText(isConnected ? getString(R.string.connected) : getString(R.string.bt_status_disconnected));
+        }
+        if (batteryChip != null) {
+            batteryChip.setVisibility(isConnected ? View.VISIBLE : View.GONE);
         }
         if (batteryText != null) {
             batteryText.setText(getString(R.string.battery_value_unavailable));
@@ -310,7 +324,72 @@ public class DashboardActivity extends AppCompatActivity {
                             fatigueHrThreshold.intValue(),
                             stressHrThreshold.intValue()
                     );
+                    Double lastKnownLat = doc.getDouble("lastKnownLat");
+                    Double lastKnownLng = doc.getDouble("lastKnownLng");
+                    if (lastKnownLat != null && lastKnownLng != null) {
+                        loadRouteSnapshot(lastKnownLat, lastKnownLng);
+                    }
                     refreshSensorData();
                 });
+    }
+
+    private void loadRouteSnapshot(double lat, double lng) {
+        if (routeSnapshotImage == null) {
+            return;
+        }
+
+        new Thread(() -> {
+            HttpURLConnection connection = null;
+            InputStream inputStream = null;
+            try {
+                String urlString = "https://maps.googleapis.com/maps/api/staticmap"
+                        + "?center=" + lat + "," + lng
+                        + "&zoom=13"
+                        + "&size=1200x700"
+                        + "&scale=2"
+                        + "&maptype=roadmap"
+                        + "&style=feature:all|element:labels.text.fill|color:0xffffff"
+                        + "&style=feature:all|element:labels.text.stroke|color:0x0a0c10"
+                        + "&style=feature:administrative|element:geometry|color:0x1e293b"
+                        + "&style=feature:poi|visibility:off"
+                        + "&style=feature:road|element:geometry|color:0x263247"
+                        + "&style=feature:road.highway|element:geometry|color:0x135bec"
+                        + "&style=feature:transit|visibility:off"
+                        + "&style=feature:water|element:geometry|color:0x0f172a"
+                        + "&markers=color:blue%7C" + lat + "," + lng
+                        + "&key=" + getMapsApiKey();
+
+                connection = (HttpURLConnection) new URL(urlString).openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                inputStream = connection.getInputStream();
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                if (bitmap != null) {
+                    runOnUiThread(() -> routeSnapshotImage.setImageBitmap(bitmap));
+                }
+            } catch (Exception ignored) {
+                // Keep the fallback placeholder if the snapshot request fails.
+            } finally {
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                } catch (Exception ignored) {
+                }
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        }).start();
+    }
+
+    private String getMapsApiKey() {
+        try {
+            android.content.pm.ApplicationInfo ai = getPackageManager()
+                    .getApplicationInfo(getPackageName(), android.content.pm.PackageManager.GET_META_DATA);
+            return ai.metaData.getString("com.google.android.geo.API_KEY");
+        } catch (Exception e) {
+            return "";
+        }
     }
 }

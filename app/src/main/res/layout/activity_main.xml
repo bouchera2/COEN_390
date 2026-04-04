@@ -1,95 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1E2A33">
+    android:background="@color/app_bg"
+    android:fillViewport="true">
 
-    <!-- Title -->
-
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Smart Bracelet"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="80dp"/>
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="32dp">
 
-    <!-- Connection Status -->
+        <FrameLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="18dp"
+            android:background="@drawable/login_icon_bg">
 
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Status: Not Connected"
-        android:textSize="20sp"
-        android:textColor="#E53935"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp"/>
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/fleetguard_title"
+                android:src="@drawable/ic_truck"
+                app:tint="@color/app_text_primary" />
+        </FrameLayout>
 
-    <!-- Scan Button -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fleetguard_title"
+            android:textColor="@color/app_text_primary"
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btnScan"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:text="Scan Devices"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:backgroundTint="#03A9F4"
-        app:layout_constraintTop_toBottomOf="@id/tvStatus"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="60dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Connect the driver bracelet before entering navigation."
+            android:textColor="@color/app_text_secondary"
+            android:textSize="14sp" />
 
-    <!-- Connect Button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/login_card_bg"
+            android:orientation="vertical"
+            android:padding="22dp">
 
-    <Button
-        android:id="@+id/btnConnect"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
-        android:text="Connect"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:backgroundTint="#4CAF50"
-        app:layout_constraintTop_toBottomOf="@id/btnScan"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bracelet Connection"
+                android:textColor="@color/app_text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="FleetGuard will automatically enter GPS once the device is connected."
+                android:textColor="@color/app_text_secondary"
+                android:textSize="13sp" />
 
-    <Button
-        android:id="@+id/btn_dashboard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#000000"
-        android:text="Open GPS"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnConnect"
-        app:layout_constraintVertical_bias="0.568" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/app_status_chip_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp">
 
-    <Button
-        android:id="@+id/btn_disconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#D32F2F"
-        android:text="@string/disconnect"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_dashboard" />
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@android:drawable/presence_online" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Status: Not Connected"
+                    android:textColor="@color/app_danger"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnScan"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="22dp"
+                android:backgroundTint="@color/app_primary"
+                android:text="Scan and Connect"
+                android:textAllCaps="false"
+                android:textColor="@color/app_text_primary"
+                android:textStyle="bold"
+                app:cornerRadius="12dp" />
+
+            <Button
+                android:id="@+id/btn_dashboard"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#1E293B"
+                android:text="Open GPS Anyway"
+                android:textAllCaps="false"
+                android:textColor="@color/app_text_primary"
+                app:cornerRadius="12dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_disconnect"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="18dp"
+            android:backgroundTint="@android:color/transparent"
+            android:text="@string/action_logout"
+            android:textAllCaps="false"
+            android:textColor="@color/app_text_secondary"
+            app:cornerRadius="12dp" />
+    </LinearLayout>
+</ScrollView>

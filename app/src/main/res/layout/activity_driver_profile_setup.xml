@@ -3,284 +3,306 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#0A0E1A">
+    android:background="@color/app_bg"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:paddingStart="20dp"
+        android:paddingTop="28dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="28dp">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="←"
-                android:textSize="24sp"
-                android:textColor="#FFFFFF"
-                android:layout_marginEnd="16dp"/>
+            <FrameLayout
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/app_status_chip_bg">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="←"
+                    android:textColor="@color/app_text_primary"
+                    android:textSize="20sp" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Driver Registration"
-                android:textSize="18sp"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"/>
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Driver Registration"
+                    android:textColor="@color/app_text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Create the FleetGuard profile used for fatigue thresholds."
+                    android:textColor="@color/app_text_secondary"
+                    android:textSize="13sp" />
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- Progress -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginTop="22dp"
             android:gravity="center_vertical"
-            android:layout_marginBottom="6dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Application Progress"
-                android:textSize="13sp"
-                android:textColor="#94A3B8"/>
+                android:textColor="@color/app_text_secondary"
+                android:textSize="13sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Step 1 of 1"
-                android:textSize="13sp"
-                android:textColor="#94A3B8"/>
+                android:textColor="@color/app_text_secondary"
+                android:textSize="13sp" />
         </LinearLayout>
 
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="6dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
             android:max="100"
             android:progress="100"
-            android:progressTint="#2563EB"
-            android:progressBackgroundTint="#1E293B"
-            android:layout_marginBottom="24dp"/>
+            android:progressBackgroundTint="@color/app_border"
+            android:progressTint="@color/app_primary" />
 
-        <!-- Title -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Professional Profile"
-            android:textSize="24sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:layout_marginBottom="6dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Please provide your details to set up your driver profile."
-            android:textSize="14sp"
-            android:textColor="#94A3B8"
-            android:layout_marginBottom="24dp"/>
-
-        <!-- Full Name -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Full Name"
-            android:textSize="13sp"
-            android:textColor="#C8D1DC"
-            android:layout_marginBottom="6dp"/>
-
-        <EditText
-            android:id="@+id/etFullName"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:background="@drawable/profile_input_bg_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:hint="e.g. Johnathan Smith"
-            android:textColor="#E8ECF0"
-            android:textColorHint="#4A5568"
-            android:textSize="14sp"
-            android:inputType="textPersonName"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Age -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Age"
-            android:textSize="13sp"
-            android:textColor="#C8D1DC"
-            android:layout_marginBottom="6dp"/>
-
-        <EditText
-            android:id="@+id/etAge"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:background="@drawable/profile_input_bg_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:hint="e.g. 35"
-            android:textColor="#E8ECF0"
-            android:textColorHint="#4A5568"
-            android:textSize="14sp"
-            android:inputType="number"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Weight & Height Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
+            android:background="@drawable/login_card_bg"
+            android:orientation="vertical"
+            android:padding="22dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Professional Profile"
+                android:textColor="@color/app_text_primary"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="22dp"
+                android:text="Please provide your details to personalize monitoring for the driver."
+                android:textColor="@color/app_text_secondary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Name"
+                android:textColor="@color/app_text_primary"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/etFullName"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/profile_input_bg_dark"
+                android:hint="e.g. Johnathan Smith"
+                android:inputType="textPersonName"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/app_text_primary"
+                android:textColorHint="#4A5568"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age"
+                android:textColor="@color/app_text_primary"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/etAge"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/profile_input_bg_dark"
+                android:hint="e.g. 35"
+                android:inputType="number"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/app_text_primary"
+                android:textColorHint="#4A5568"
+                android:textSize="14sp" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginEnd="8dp">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Weight (kg)"
-                    android:textSize="13sp"
-                    android:textColor="#C8D1DC"
-                    android:layout_marginBottom="6dp"/>
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/etWeight"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:background="@drawable/profile_input_bg_dark"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:hint="e.g. 80"
-                    android:textColor="#E8ECF0"
-                    android:textColorHint="#4A5568"
-                    android:textSize="14sp"
-                    android:inputType="numberDecimal"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Weight (kg)"
+                        android:textColor="@color/app_text_primary"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/etWeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/profile_input_bg_dark"
+                        android:hint="e.g. 80"
+                        android:inputType="numberDecimal"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="@color/app_text_primary"
+                        android:textColorHint="#4A5568"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Height (cm)"
+                        android:textColor="@color/app_text_primary"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/etHeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/profile_input_bg_dark"
+                        android:hint="e.g. 175"
+                        android:inputType="numberDecimal"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:textColor="@color/app_text_primary"
+                        android:textColorHint="#4A5568"
+                        android:textSize="14sp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="8dp">
+                android:layout_marginTop="16dp"
+                android:text="Resting Heart Rate (BPM)"
+                android:textColor="@color/app_text_primary"
+                android:textSize="13sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Height (cm)"
-                    android:textSize="13sp"
-                    android:textColor="#C8D1DC"
-                    android:layout_marginBottom="6dp"/>
+            <EditText
+                android:id="@+id/etRestingHR"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/profile_input_bg_dark"
+                android:hint="e.g. 70 (leave blank if unknown)"
+                android:inputType="number"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/app_text_primary"
+                android:textColorHint="#4A5568"
+                android:textSize="14sp" />
 
-                <EditText
-                    android:id="@+id/etHeight"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:background="@drawable/profile_input_bg_dark"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:hint="e.g. 175"
-                    android:textColor="#E8ECF0"
-                    android:textColorHint="#4A5568"
-                    android:textSize="14sp"
-                    android:inputType="numberDecimal"/>
-            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Emergency Contact"
+                android:textColor="@color/app_text_primary"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/etEmergencyContact"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="28dp"
+                android:background="@drawable/profile_input_bg_dark"
+                android:hint="Phone Number"
+                android:inputType="phone"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/app_text_primary"
+                android:textColorHint="#4A5568"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btnSaveProfile"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:backgroundTint="@color/app_primary"
+                android:text="Complete Registration"
+                android:textAllCaps="false"
+                android:textColor="@color/app_text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp" />
+
+            <Button
+                android:id="@+id/btnSkip"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@android:color/transparent"
+                android:text="Skip for Now"
+                android:textAllCaps="false"
+                android:textColor="@color/app_text_secondary"
+                app:cornerRadius="12dp" />
         </LinearLayout>
 
-        <!-- Resting Heart Rate -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resting Heart Rate (BPM)"
-            android:textSize="13sp"
-            android:textColor="#C8D1DC"
-            android:layout_marginBottom="6dp"/>
-
-        <EditText
-            android:id="@+id/etRestingHR"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:background="@drawable/profile_input_bg_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:hint="e.g. 70 (leave blank if unknown)"
-            android:textColor="#E8ECF0"
-            android:textColorHint="#4A5568"
-            android:textSize="14sp"
-            android:inputType="number"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Emergency Contact -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Emergency Contact"
-            android:textSize="13sp"
-            android:textColor="#C8D1DC"
-            android:layout_marginBottom="6dp"/>
-
-        <EditText
-            android:id="@+id/etEmergencyContact"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:background="@drawable/profile_input_bg_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:hint="Phone Number"
-            android:textColor="#E8ECF0"
-            android:textColorHint="#4A5568"
-            android:textSize="14sp"
-            android:inputType="phone"
-            android:layout_marginBottom="32dp"/>
-
-        <!-- Save Button -->
-        <Button
-            android:id="@+id/btnSaveProfile"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Complete Registration  →"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:backgroundTint="#2563EB"
-            app:cornerRadius="12dp"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Skip -->
-        <Button
-            android:id="@+id/btnSkip"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="Skip for Now"
-            android:textSize="14sp"
-            android:textColor="#94A3B8"
-            android:backgroundTint="@android:color/transparent"
-            app:cornerRadius="12dp"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Terms -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="18dp"
+            android:gravity="center"
             android:text="By continuing, you agree to our Terms of Service and Driver Policy."
-            android:textSize="11sp"
             android:textColor="#64748B"
-            android:gravity="center"/>
-
+            android:textSize="11sp" />
     </LinearLayout>
 </ScrollView>
