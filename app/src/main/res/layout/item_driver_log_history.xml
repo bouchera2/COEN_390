@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
-    android:backgroundTint="#FFFFFF"
+    android:backgroundTint="#0F172A"
     app:cardCornerRadius="16dp"
-    app:strokeColor="#E2E8F0"
+    app:strokeColor="#1E293B"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Date"
-                android:textColor="#0F172A"
+                android:textColor="#F8FAFC"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/dialog_holo_light_frame"
-                android:backgroundTint="#EAF9F0"
+                android:backgroundTint="#113124"
                 android:paddingStart="10dp"
                 android:paddingTop="6dp"
                 android:paddingEnd="10dp"
@@ -44,7 +44,7 @@
                 android:text="SAVED"
                 android:gravity="center"
                 android:textAllCaps="true"
-                android:textColor="#16A34A"
+                android:textColor="#22C55E"
                 android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -73,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Event"
-                    android:textColor="#64748B"
+                    android:textColor="#94A3B8"
                     android:textSize="13sp" />
 
                 <TextView
@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Scheduled Rest"
-                    android:textColor="#0F172A"
+                    android:textColor="#F8FAFC"
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -114,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="0 files"
-                    android:textColor="#0F172A"
+                    android:textColor="#F8FAFC"
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -140,7 +140,7 @@
                     android:layout_marginTop="4dp"
                     android:maxLines="2"
                     android:text="No notes"
-                    android:textColor="#0F172A"
+                    android:textColor="#F8FAFC"
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>

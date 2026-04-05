@@ -15,7 +15,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Locale;
@@ -26,9 +25,6 @@ public class SettingsActivity extends AppCompatActivity {
     private View navDashboardItem;
     private View navLogItem;
     private View navSettingsItem;
-
-    // ── Theme ────────────────────────────────────────────────────────────────
-    private MaterialSwitch switchDarkMode;
 
     // ── Threshold UI ─────────────────────────────────────────────────────────
     // BPM DROWSY max  (range 40–90, default 60)
@@ -70,7 +66,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         bindViews();
         bindNavigation();
-        bindThemeToggle();
         bindThresholdControls();
         bindLogout();
 
@@ -86,7 +81,6 @@ public class SettingsActivity extends AppCompatActivity {
         navDashboardItem = findViewById(R.id.navDashboardItem);
         navLogItem       = findViewById(R.id.navLogItem);
         navSettingsItem  = findViewById(R.id.navSettingsItem);
-        switchDarkMode   = findViewById(R.id.switchDarkMode);
 
         seekBpmDrowsy    = findViewById(R.id.seekBpmDrowsy);
         tvBpmDrowsyVal   = findViewById(R.id.tvBpmDrowsyVal);
@@ -103,7 +97,7 @@ public class SettingsActivity extends AppCompatActivity {
     //  Navigation
     private void bindNavigation() {
         navDashboardItem.setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class));
+            startActivity(new Intent(this, GpsNavigationActivity.class));
             finish();
         });
         navLogItem.setOnClickListener(v -> {
@@ -111,13 +105,6 @@ public class SettingsActivity extends AppCompatActivity {
             finish();
         });
         navSettingsItem.setOnClickListener(v -> { /* already here */ });
-    }
-
-    //  Dark mode
-    private void bindThemeToggle() {
-        switchDarkMode.setChecked(ThemePreferenceManager.isDarkModeEnabled(this));
-        switchDarkMode.setOnCheckedChangeListener((btn, checked) ->
-                ThemePreferenceManager.setDarkModeEnabled(this, checked));
     }
 
     // ── Thresholds

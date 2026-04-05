@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F6F8">
+    android:background="#101622">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,9 +15,9 @@
             android:id="@+id/driverLogToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#F6F6F8"
+            android:background="#101622"
             app:title="Driver Log"
-            app:titleTextColor="#0F172A">
+            app:titleTextColor="#F8FAFC">
 
             <TextView
                 android:id="@+id/textTripStatus"
@@ -26,14 +26,15 @@
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="16dp"
                 android:background="@android:drawable/dialog_holo_light_frame"
-                android:backgroundTint="#EAF9F0"
+                android:backgroundTint="#112E21"
                 android:paddingStart="10dp"
                 android:paddingTop="6dp"
                 android:paddingEnd="10dp"
                 android:paddingBottom="6dp"
+                android:text="Active Trip"
                 android:textAllCaps="true"
                 android:gravity="center"
-                android:textColor="#16A34A"
+                android:textColor="#22C55E"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
@@ -42,12 +43,12 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#E2E8F0" />
+            android:background="#1E293B" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F6F6F8"
+            android:background="#101622"
             android:orientation="horizontal">
 
             <TextView
@@ -92,7 +93,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="#F6F6F8" />
+                android:background="#101622" />
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
@@ -117,10 +118,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="24dp"
-                    android:backgroundTint="#EEF4FF"
+                    android:backgroundTint="#122340"
                     android:visibility="gone"
                     app:cardCornerRadius="16dp"
-                    app:strokeColor="#C9DBFF"
+                    app:strokeColor="#264A86"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -157,7 +158,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="CURRENT ROUTE"
-                                android:textColor="#64748B"
+                                android:textColor="#94A3B8"
                                 android:textSize="11sp"
                                 android:textStyle="bold" />
 
@@ -166,7 +167,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:text="Chicago Depot → Austin Logistics Hub"
-                                android:textColor="#0F172A"
+                                android:textColor="#F8FAFC"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -177,7 +178,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Log New Event"
-                    android:textColor="#0F172A"
+                    android:textColor="#F8FAFC"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -187,7 +188,7 @@
                     android:layout_marginTop="6dp"
                     android:layout_marginBottom="20dp"
                     android:text="Select the category that best describes the situation."
-                    android:textColor="#64748B"
+                    android:textColor="#94A3B8"
                     android:textSize="14sp" />
 
                 <GridLayout
@@ -206,7 +207,7 @@
                         android:layout_columnWeight="1"
                         android:layout_gravity="fill_horizontal"
                         android:layout_margin="6dp"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="#0F172A"
                         android:clickable="true"
                         android:focusable="true"
                         app:cardCornerRadius="16dp"
@@ -237,7 +238,7 @@
                                 android:buttonTint="#135BEC"
                                 android:checked="true"
                                 android:text="Scheduled Rest"
-                                android:textColor="#0F172A"
+                                android:textColor="#F8FAFC"
                                 android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -249,11 +250,11 @@
                         android:layout_columnWeight="1"
                         android:layout_gravity="fill_horizontal"
                         android:layout_margin="6dp"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="#0F172A"
                         android:clickable="true"
                         android:focusable="true"
                         app:cardCornerRadius="16dp"
-                        app:strokeColor="#E2E8F0"
+                        app:strokeColor="#1E293B"
                         app:strokeWidth="2dp">
 
                         <LinearLayout
@@ -279,7 +280,7 @@
                                 android:button="@null"
                                 android:buttonTint="#64748B"
                                 android:text="Unscheduled Stop"
-                                android:textColor="#0F172A"
+                                android:textColor="#F8FAFC"
                                 android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -291,11 +292,11 @@
                         android:layout_columnWeight="1"
                         android:layout_gravity="fill_horizontal"
                         android:layout_margin="6dp"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="#0F172A"
                         android:clickable="true"
                         android:focusable="true"
                         app:cardCornerRadius="16dp"
-                        app:strokeColor="#E2E8F0"
+                        app:strokeColor="#1E293B"
                         app:strokeWidth="2dp">
 
                         <LinearLayout
@@ -321,7 +322,7 @@
                                 android:button="@null"
                                 android:buttonTint="#64748B"
                                 android:text="Accident / Incident"
-                                android:textColor="#0F172A"
+                                android:textColor="#F8FAFC"
                                 android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -333,11 +334,11 @@
                         android:layout_columnWeight="1"
                         android:layout_gravity="fill_horizontal"
                         android:layout_margin="6dp"
-                        android:backgroundTint="#FFFFFF"
+                        android:backgroundTint="#0F172A"
                         android:clickable="true"
                         android:focusable="true"
                         app:cardCornerRadius="16dp"
-                        app:strokeColor="#E2E8F0"
+                        app:strokeColor="#1E293B"
                         app:strokeWidth="2dp">
 
                         <LinearLayout
@@ -363,7 +364,7 @@
                                 android:button="@null"
                                 android:buttonTint="#64748B"
                                 android:text="Road Closure"
-                                android:textColor="#0F172A"
+                                android:textColor="#F8FAFC"
                                 android:textSize="12sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -374,7 +375,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:text="Notes"
-                    android:textColor="#334155"
+                    android:textColor="#E2E8F0"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -395,12 +396,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Describe the situation, location, and any immediate actions taken..."
-                    app:boxBackgroundColor="#FFFFFF"
+                    app:boxBackgroundColor="#0F172A"
                     app:boxCornerRadiusBottomEnd="16dp"
                     app:boxCornerRadiusBottomStart="16dp"
                     app:boxCornerRadiusTopEnd="16dp"
                     app:boxCornerRadiusTopStart="16dp"
-                    app:boxStrokeColor="#E2E8F0"
+                    app:boxStrokeColor="#1E293B"
                     app:hintTextColor="#64748B">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -410,7 +411,7 @@
                         android:gravity="top|start"
                         android:inputType="textMultiLine"
                         android:paddingTop="14dp"
-                        android:textColor="#0F172A"
+                        android:textColor="#F8FAFC"
                         android:textColorHint="#64748B" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -419,11 +420,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:backgroundTint="#FFFFFF"
+                    android:backgroundTint="#0F172A"
                     android:clickable="true"
                     android:focusable="true"
                     app:cardCornerRadius="16dp"
-                    app:strokeColor="#E2E8F0"
+                    app:strokeColor="#1E293B"
                     app:strokeWidth="2dp">
 
                     <LinearLayout
@@ -446,7 +447,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:text="Attach photos or documents (Optional)"
-                            android:textColor="#64748B"
+                            android:textColor="#94A3B8"
                             android:textSize="14sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -471,7 +472,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="bottom"
-        android:background="#FFFFFF"
+        android:background="#101622"
         android:elevation="8dp"
         android:gravity="center"
         android:orientation="horizontal"
@@ -496,7 +497,7 @@
                 android:layout_height="22dp"
                 android:contentDescription="Dashboard"
                 android:src="@drawable/ic_house"
-                app:tint="#94A3B8" />
+                app:tint="#64748B" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -504,7 +505,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Dashboard"
                 android:textAllCaps="true"
-                android:textColor="#94A3B8"
+                android:textColor="#64748B"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -525,7 +526,7 @@
                 android:layout_height="22dp"
                 android:contentDescription="Alerts"
                 android:src="@drawable/ic_bell"
-                app:tint="#94A3B8" />
+                app:tint="#64748B" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -533,7 +534,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Alerts"
                 android:textAllCaps="true"
-                android:textColor="#94A3B8"
+                android:textColor="#64748B"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -583,7 +584,7 @@
                 android:layout_height="22dp"
                 android:contentDescription="Settings"
                 android:src="@drawable/ic_gear"
-                app:tint="#94A3B8" />
+                app:tint="#64748B" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -591,7 +592,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Settings"
                 android:textAllCaps="true"
-                android:textColor="#94A3B8"
+                android:textColor="#64748B"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F6F8">
+    android:background="#101622">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,19 +15,19 @@
             android:id="@+id/driverLogHistoryToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#F6F6F8"
+            android:background="#101622"
             app:title="Driver Log"
-            app:titleTextColor="#0F172A" />
+            app:titleTextColor="#F8FAFC" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#E2E8F0" />
+            android:background="#1E293B" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#F6F6F8"
+            android:background="#101622"
             android:orientation="horizontal">
 
             <TextView
@@ -68,7 +68,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="#F6F6F8" />
+                android:background="#101622" />
 
             <View
                 android:layout_width="0dp"
@@ -96,9 +96,9 @@
                     android:id="@+id/emptyHistoryCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#FFFFFF"
+                    android:backgroundTint="#0F172A"
                     app:cardCornerRadius="16dp"
-                    app:strokeColor="#E2E8F0"
+                    app:strokeColor="#1E293B"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -120,7 +120,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
                             android:text="No logs yet"
-                            android:textColor="#0F172A"
+                            android:textColor="#F8FAFC"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -130,7 +130,7 @@
                             android:layout_marginTop="8dp"
                             android:gravity="center"
                             android:text="Submitted route history will appear here when log entries are added."
-                            android:textColor="#64748B"
+                            android:textColor="#94A3B8"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -148,7 +148,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="bottom"
-        android:background="#FFFFFF"
+        android:background="#101622"
         android:elevation="8dp"
         android:gravity="center"
         android:orientation="horizontal"
@@ -173,7 +173,7 @@
                 android:layout_height="22dp"
                 android:contentDescription="Dashboard"
                 android:src="@drawable/ic_house"
-                app:tint="#94A3B8" />
+                app:tint="#64748B" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -181,7 +181,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Dashboard"
                 android:textAllCaps="true"
-                android:textColor="#94A3B8"
+                android:textColor="#64748B"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -202,7 +202,7 @@
                 android:layout_height="22dp"
                 android:contentDescription="Alerts"
                 android:src="@drawable/ic_bell"
-                app:tint="#94A3B8" />
+                app:tint="#64748B" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -210,7 +210,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Alerts"
                 android:textAllCaps="true"
-                android:textColor="#94A3B8"
+                android:textColor="#64748B"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -260,7 +260,7 @@
                 android:layout_height="22dp"
                 android:contentDescription="Settings"
                 android:src="@drawable/ic_gear"
-                app:tint="#94A3B8" />
+                app:tint="#64748B" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -268,7 +268,7 @@
                 android:layout_marginTop="4dp"
                 android:text="Settings"
                 android:textAllCaps="true"
-                android:textColor="#94A3B8"
+                android:textColor="#64748B"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>

@@ -37,6 +37,7 @@
     <string name="gps_navigation_title">GPS Navigation</string>
     <string name="gps_back_button">Go back</string>
     <string name="eta_value">ETA: 14:30</string>
+    <string name="nav_gps">GPS</string>
     <string name="nav_dashboard">Dashboard</string>
     <string name="nav_alerts">Alerts</string>
     <string name="nav_log">Log</string>
