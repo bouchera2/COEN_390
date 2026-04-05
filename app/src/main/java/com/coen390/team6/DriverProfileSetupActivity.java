@@ -2,23 +2,28 @@ package com.coen390.team6;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DriverProfileSetupActivity extends AppCompatActivity {
+    public static final String EXTRA_EDIT_MODE = "edit_mode";
 
     private EditText etFullName, etAge, etWeight, etHeight, etRestingHR, etEmergencyContact;
     private FirebaseFirestore db;
     private String uid;
+    private boolean isEditMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,7 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        isEditMode = getIntent().getBooleanExtra(EXTRA_EDIT_MODE, false);
 
         etFullName = findViewById(R.id.etFullName);
         etAge = findViewById(R.id.etAge);
@@ -36,11 +42,34 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
         etRestingHR = findViewById(R.id.etRestingHR);
         etEmergencyContact = findViewById(R.id.etEmergencyContact);
 
+        View btnBack = findViewById(R.id.btnBack);
+        TextView tvTitle = findViewById(R.id.tvProfileSetupTitle);
+        TextView tvSubtitle = findViewById(R.id.tvProfileSetupSubtitle);
+        View progressSection = findViewById(R.id.progressSection);
+        View progressBar = findViewById(R.id.progressBarProfile);
         Button btnSave = findViewById(R.id.btnSaveProfile);
         Button btnSkip = findViewById(R.id.btnSkip);
 
+        btnBack.setOnClickListener(v -> finish());
+
+        if (isEditMode) {
+            tvTitle.setText("Edit Personal Information");
+            tvSubtitle.setText("Update the driver profile used for personalized monitoring.");
+            progressSection.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            btnSave.setText("Save Changes");
+            btnSkip.setText("Cancel");
+            loadExistingProfile();
+        }
+
         btnSave.setOnClickListener(v -> saveProfile());
-        btnSkip.setOnClickListener(v -> goToMain());
+        btnSkip.setOnClickListener(v -> {
+            if (isEditMode) {
+                finish();
+            } else {
+                goToMain();
+            }
+        });
     }
 
     private void saveProfile() {
@@ -123,10 +152,19 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
 
         db.collection("drivers").document(uid).update(profile)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Profile saved! Max HR: " + maxHR +
-                                    " | Normal zone: " + normalHRLow + "-" + normalHRHigh + " BPM",
-                            Toast.LENGTH_LONG).show();
-                    goToMain();
+                    Toast.makeText(
+                            this,
+                            isEditMode
+                                    ? "Profile updated."
+                                    : "Profile saved! Max HR: " + maxHR + " | Normal zone: "
+                                    + normalHRLow + "-" + normalHRHigh + " BPM",
+                            Toast.LENGTH_LONG
+                    ).show();
+                    if (isEditMode) {
+                        finish();
+                    } else {
+                        goToMain();
+                    }
                 })
                 .addOnFailureListener(e -> {
                     // If document doesn't exist yet, use set instead of update
@@ -145,12 +183,62 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
 
                     db.collection("drivers").document(uid).set(profile)
                             .addOnSuccessListener(a -> {
-                                Toast.makeText(this, "Profile created!", Toast.LENGTH_SHORT).show();
-                                goToMain();
+                                Toast.makeText(
+                                        this,
+                                        isEditMode ? "Profile updated." : "Profile created!",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                if (isEditMode) {
+                                    finish();
+                                } else {
+                                    goToMain();
+                                }
                             })
                             .addOnFailureListener(err ->
                                     Toast.makeText(this, "Error: " + err.getMessage(), Toast.LENGTH_LONG).show());
                 });
+    }
+
+    private void loadExistingProfile() {
+        db.collection("drivers").document(uid).get()
+                .addOnSuccessListener(this::populateFields)
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Unable to load profile.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void populateFields(DocumentSnapshot doc) {
+        if (!doc.exists()) {
+            return;
+        }
+
+        String name = doc.getString("name");
+        Long age = doc.getLong("age");
+        Double weight = doc.getDouble("weight");
+        Double height = doc.getDouble("height");
+        Long restingHr = doc.getLong("restingHeartRate");
+
+        Object emergency = doc.get("emergencyContact");
+        String emergencyPhone = "";
+        if (emergency instanceof Map) {
+            Object phone = ((Map<?, ?>) emergency).get("phone");
+            if (phone != null) {
+                emergencyPhone = String.valueOf(phone);
+            }
+        }
+
+        etFullName.setText(name != null ? name : "");
+        etAge.setText(age != null ? String.valueOf(age) : "");
+        etWeight.setText(weight != null ? formatDecimal(weight) : "");
+        etHeight.setText(height != null ? formatDecimal(height) : "");
+        etRestingHR.setText(restingHr != null ? String.valueOf(restingHr) : "");
+        etEmergencyContact.setText(emergencyPhone);
+    }
+
+    private String formatDecimal(double value) {
+        if (value == Math.rint(value)) {
+            return String.valueOf((long) value);
+        }
+        return String.valueOf(value);
     }
 
     private void goToMain() {
