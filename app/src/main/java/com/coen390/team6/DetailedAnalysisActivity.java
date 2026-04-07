@@ -227,7 +227,7 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         applyDriverState(state);
 
         // ── Fatigue Score
-        float score = FatigueAnalysis.computeFatigueScore(displayBpm, gsrF, gsrB);
+        float score = computeFatigueScore(displayBpm, gsrF, gsrB);
         applyFatigueScore(score);
 
         // ── Add to live chart history
@@ -362,7 +362,7 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
             Long ts     = doc.getLong("timestamp");
             if (bpmL == null || ts == null) continue;
 
-            float score = FatigueAnalysis.computeFatigueScore(
+            float score = computeFatigueScore(
                     bpmL.intValue(),
                     gsrF != null ? gsrF.floatValue() : 0f,
                     gsrB != null ? gsrB.floatValue() : 0f
