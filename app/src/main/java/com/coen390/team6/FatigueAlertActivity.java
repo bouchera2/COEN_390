@@ -82,6 +82,11 @@ public class FatigueAlertActivity extends AppCompatActivity {
         btnFindRestStop.setOnClickListener(v -> {
             stopAlarm();
             FatigueAlertNotifier.cancel(this);
+            AlertHistoryPreferences.archiveActiveAlert(
+                    this,
+                    "Resolved",
+                    "Driver selected nearest rest stop guidance after high fatigue warning."
+            );
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=rest+stop+near+me"));
             intent.setPackage("com.google.android.apps.maps");
             startActivity(intent);
@@ -91,12 +96,22 @@ public class FatigueAlertActivity extends AppCompatActivity {
         btnCallDispatch.setOnClickListener(v -> {
             stopAlarm();
             FatigueAlertNotifier.cancel(this);
+            AlertHistoryPreferences.archiveActiveAlert(
+                    this,
+                    "Resolved",
+                    "Driver opened dispatch contact after the fatigue warning."
+            );
             startActivity(new Intent(Intent.ACTION_DIAL));
         });
 
         btnDismiss.setOnClickListener(v -> {
             stopAlarm();
             FatigueAlertNotifier.cancel(this);
+            AlertHistoryPreferences.archiveActiveAlert(
+                    this,
+                    "Dismissed",
+                    "Driver dismissed the fatigue warning as a false alarm."
+            );
             finish();
         });
     }

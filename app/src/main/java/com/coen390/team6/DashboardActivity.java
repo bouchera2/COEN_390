@@ -337,6 +337,17 @@ public class DashboardActivity extends AppCompatActivity {
         long hours = driveMinutes / 60L;
         long minutes = driveMinutes % 60L;
         String driveTime = String.format(java.util.Locale.US, "%dh %02dm", hours, minutes);
+        long timestampMs = System.currentTimeMillis();
+        String alertMessage = "Critical fatigue detected. Immediate rest is recommended for driver safety.";
+
+        AlertHistoryPreferences.saveActiveAlert(
+                this,
+                "High Fatigue Risk",
+                alertMessage,
+                fatigueScore,
+                currentHr,
+                timestampMs
+        );
 
         FatigueAlertNotifier.showFatigueAlert(
                 this,
@@ -351,6 +362,7 @@ public class DashboardActivity extends AppCompatActivity {
         alertIntent.putExtra("fatigueLevel", "HIGH");
         alertIntent.putExtra("driveTime", driveTime);
         alertIntent.putExtra("driveTimeMinutes", driveMinutes);
+        alertIntent.putExtra("fatigueScore", fatigueScore);
         startActivity(alertIntent);
     }
 
