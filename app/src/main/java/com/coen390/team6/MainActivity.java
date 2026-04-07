@@ -49,7 +49,11 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothGatt bluetoothGatt;
 
     private Button btnScanConnect;
+    private Button btnRefresh;
     private TextView tvStatus;
+    private TextView tvScanStatus;
+    private TextView tvDeviceName;
+    private TextView tvSignalStrength;
 
     private BluetoothDevice esp32Device;
     private final Handler reconnectHandler = new Handler(Looper.getMainLooper());
@@ -73,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
             if (TARGET_DEVICE_NAME.equals(deviceName)) {
                 stopBleScan();
                 esp32Device = device;
+                String matchedDeviceName = deviceName;
+                int deviceRssi = result.getRssi();
+                runOnUiThread(() -> updateDeviceCard(matchedDeviceName, deviceRssi));
                 connectToDevice();
             }
         }
@@ -82,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
             super.onScanFailed(errorCode);
             isScanning = false;
             Log.d(TAG, "BLE scan failed: " + errorCode);
-            runOnUiThread(() -> updateStatus("Status: Scan failed", android.R.color.holo_red_dark));
+            runOnUiThread(() -> {
+                updateStatus("Status: Scan failed", android.R.color.holo_red_dark);
+                updateScanStatus("Scan failed");
+            });
         }
     };
 
@@ -93,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Button btnDashboard = findViewById(R.id.btn_dashboard);
         Button btnDisconnect = findViewById(R.id.btn_disconnect);
+        View btnBack = findViewById(R.id.btnBack);
         btnDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +120,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnScanConnect = findViewById(R.id.btnScan);
+        btnRefresh = findViewById(R.id.btnRefresh);
         tvStatus = findViewById(R.id.tvStatus);
+        tvScanStatus = findViewById(R.id.tvScanStatus);
+        tvDeviceName = findViewById(R.id.tvDeviceName);
+        tvSignalStrength = findViewById(R.id.tvSignalStrength);
         BleSensorPreferences.setConnected(this, false);
 
         BluetoothManager bluetoothManager = getSystemService(BluetoothManager.class);
@@ -120,6 +135,16 @@ public class MainActivity extends AppCompatActivity {
                 startScanAndConnect();
             }
         });
+        if (btnRefresh != null) {
+            btnRefresh.setOnClickListener(v -> {
+                if (checkPermissions()) {
+                    startScanAndConnect();
+                }
+            });
+        }
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
         // Automatic Connection
         if (checkPermissions()) {
             startScanAndConnect();
@@ -150,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
     private void startScanAndConnect() {
         if (bluetoothAdapter == null) {
             updateStatus("Status: Bluetooth unavailable", android.R.color.holo_red_dark);
+            updateScanStatus("Bluetooth unavailable");
             return;
         }
 
@@ -160,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
         if (scanner == null) {
             updateStatus("Status: BLE scanner unavailable", android.R.color.holo_red_dark);
+            updateScanStatus("Scanner unavailable");
             return;
         }
 
@@ -168,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         updateStatus("Status: Scanning...", android.R.color.holo_orange_dark);
+        updateScanStatus("Scanning...");
         isScanning = true;
         ScanFilter filter = new ScanFilter.Builder()
                 .setServiceUuid(new ParcelUuid(SERVICE_UUID))
@@ -181,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
             if (isScanning) {
                 stopBleScan();
                 updateStatus("Status: Device not found", android.R.color.holo_red_dark);
+                updateScanStatus("Device not found");
             }
         }, 10000);
     }
@@ -206,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
 
                     runOnUiThread(() -> {
                         updateStatus("Status: Connected", android.R.color.holo_green_dark);
+                        updateScanStatus("Connected");
                         openGpsHome();
                     });
 
@@ -216,7 +246,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG,"Disconnected from ESP32");
                     BleSensorPreferences.setConnected(MainActivity.this, false);
 
-                    runOnUiThread(() -> updateStatus("Status: Not Connected", android.R.color.holo_red_dark));
+                    runOnUiThread(() -> {
+                        updateStatus("Status: Not Connected", android.R.color.holo_red_dark);
+                        updateScanStatus("Disconnected");
+                    });
                     if (shouldReconnect) {
                         reconnectDevice();
                     }
@@ -343,6 +376,29 @@ public class MainActivity extends AppCompatActivity {
     private void updateStatus(String statusText, int colorRes) {
         tvStatus.setText(statusText);
         tvStatus.setTextColor(getResources().getColor(colorRes));
+    }
+
+    private void updateScanStatus(String statusText) {
+        if (tvScanStatus != null) {
+            tvScanStatus.setText(statusText);
+        }
+    }
+
+    private void updateDeviceCard(String deviceName, int rssi) {
+        if (tvDeviceName != null && deviceName != null && !deviceName.isEmpty()) {
+            tvDeviceName.setText(deviceName);
+        }
+        if (tvSignalStrength != null) {
+            String strength;
+            if (rssi >= -60) {
+                strength = "Strong signal";
+            } else if (rssi >= -75) {
+                strength = "Good signal";
+            } else {
+                strength = "Weak signal";
+            }
+            tvSignalStrength.setText("\uD83D\uDCF6 " + strength);
+        }
     }
 
     private void openGpsHome() {
