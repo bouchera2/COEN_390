@@ -270,7 +270,8 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void refreshDriverOverlay() {
-        DriverFatigueStatus fatigueStatus = DriverFatigueStatus.from(this);
+        DetailedAnalysisActivity.FatigueSnapshot fatigueStatus =
+                DetailedAnalysisActivity.getFatigueSnapshot(this);
         tvFatigueEmoji.setText(fatigueStatus.getEmoji());
         tvFatigueScore.setText(fatigueStatus.getScoreText());
         tvFatigueScore.setTextColor(fatigueStatus.getAccentColor());

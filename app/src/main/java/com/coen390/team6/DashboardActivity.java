@@ -162,7 +162,8 @@ public class DashboardActivity extends AppCompatActivity {
         boolean isConnected = BleSensorPreferences.isConnected(this);
         int avgBpm = BleSensorPreferences.getAvgBpm(this);
         float bpm = BleSensorPreferences.getBpm(this);
-        DriverFatigueStatus fatigueStatus = DriverFatigueStatus.from(this);
+        DetailedAnalysisActivity.FatigueSnapshot fatigueStatus =
+                DetailedAnalysisActivity.getFatigueSnapshot(this);
         boolean fingerDetected = BleSensorPreferences.isFingerDetected(this);
 
         if (heartRateText != null) {
@@ -178,7 +179,7 @@ public class DashboardActivity extends AppCompatActivity {
             batteryText.setText(getString(R.string.battery_value_unavailable));
         }
         if (fatigueText != null) {
-            fatigueText.setText(fatigueStatus.getRiskPercent() + "%");
+            fatigueText.setText(fatigueStatus.getScore() + "%");
             fatigueText.setTextColor(Color.parseColor("#3B82F6"));
         }
         if (fatigueLabelText != null) {
@@ -194,7 +195,7 @@ public class DashboardActivity extends AppCompatActivity {
         }
         if (fatigueGauge != null) {
             fatigueGauge.setIndicatorColor(fatigueStatus.getAccentColor());
-            fatigueGauge.setProgress(fatigueStatus.getRiskPercent());
+            fatigueGauge.setProgress(fatigueStatus.getScore());
         }
 
         updateHeartRateBars(fingerDetected, avgBpm, bpm);
