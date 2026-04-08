@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Button btnDashboard = findViewById(R.id.btn_dashboard);
         Button btnDisconnect = findViewById(R.id.btn_disconnect);
-        View btnBack = findViewById(R.id.btnBack);
         btnDashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,9 +140,6 @@ public class MainActivity extends AppCompatActivity {
                     startScanAndConnect();
                 }
             });
-        }
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
         }
         // Automatic Connection
         if (checkPermissions()) {

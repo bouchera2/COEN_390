@@ -79,7 +79,7 @@ public class AlertsActivity extends AppCompatActivity {
     private void bindNavigation() {
         if (navDashboardItem != null) {
             navDashboardItem.setOnClickListener(v -> {
-                startActivity(new Intent(this, GpsNavigationActivity.class));
+                startActivity(NavigationIntentFactory.createGpsIntent(this));
                 finish();
             });
         }

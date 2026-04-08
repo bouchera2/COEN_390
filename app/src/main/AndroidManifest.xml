@@ -27,7 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.COEN390_project">
         <activity
-            android:name=".DriverProfileSetupActivity" android:exported="false" />
+            android:name=".DriverProfileSetupActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -35,22 +37,49 @@
 
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".DashboardActivity" android:exported="false" />
-        <activity android:name=".DriverLogActivity" android:exported="false" />
-        <activity android:name=".DriverLogHistoryActivity" android:exported="false" />
-        <activity android:name=".SettingsActivity" android:exported="false" />
-        <activity android:name=".MainActivity" android:exported="false" />
-        <activity android:name=".GpsNavigationActivity" android:exported="false" />
-        <activity android:name=".AlertsActivity" android:exported="false" />
-        <activity android:name=".FatigueAlertActivity" android:exported="false" />
-        <activity android:name=".DetailedAnalysisActivity" />
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DriverLogActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DriverLogHistoryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".GpsNavigationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AlertsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FatigueAlertActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DetailedAnalysisActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

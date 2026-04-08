@@ -17,6 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="#101622"
             app:title="Driver Log"
+            app:titleTextAppearance="@style/TextAppearance.COEN390.ToolbarTitle"
             app:titleTextColor="#F8FAFC">
 
             <TextView

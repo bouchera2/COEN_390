@@ -78,8 +78,7 @@ public class DriverLogHistoryActivity extends AppCompatActivity {
         });
 
         navDashboardItem.setOnClickListener(v -> {
-            Intent intent = new Intent(DriverLogHistoryActivity.this, GpsNavigationActivity.class);
-            startActivity(intent);
+            startActivity(NavigationIntentFactory.createGpsIntent(this));
             finish();
         });
 

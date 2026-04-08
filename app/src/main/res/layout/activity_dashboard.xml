@@ -47,7 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:text="@string/fleetguard_title"
+                        android:text="@string/driverguard_title"
                         android:textColor="#F8FAFC"
                         android:textSize="26sp"
                         android:textStyle="bold" />
@@ -84,6 +84,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/bluetoothStatusChip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -96,6 +97,7 @@
                     android:paddingBottom="6dp">
 
                     <View
+                        android:id="@+id/bluetoothStatusDot"
                         android:layout_width="8dp"
                         android:layout_height="8dp"
                         android:background="@android:drawable/presence_online" />
@@ -402,7 +404,7 @@
                                     android:id="@+id/drivingTimeText"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/driving_time_value"
+                                    android:text="--:--"
                                     android:textColor="#F8FAFC"
                                     android:textSize="32sp"
                                     android:textStyle="bold" />
@@ -452,7 +454,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="I-80 Westbound"
+                        android:text=""
                         android:textColor="#135BEC"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -534,15 +536,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="#DD135BEC"
-                                android:paddingStart="10dp"
-                                android:paddingTop="6dp"
-                                android:paddingEnd="10dp"
-                                android:paddingBottom="6dp"
-                                android:text="@string/eta_value"
-                                android:textColor="#FFFFFF"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
+                                android:text="" />
                         </LinearLayout>
                     </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>

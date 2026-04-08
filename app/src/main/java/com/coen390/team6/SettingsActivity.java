@@ -115,7 +115,7 @@ public class SettingsActivity extends AppCompatActivity {
     //  Navigation
     private void bindNavigation() {
         navDashboardItem.setOnClickListener(v -> {
-            startActivity(new Intent(this, GpsNavigationActivity.class));
+            startActivity(NavigationIntentFactory.createGpsIntent(this));
             finish();
         });
         navLogItem.setOnClickListener(v -> {

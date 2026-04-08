@@ -50,6 +50,8 @@ public class DashboardActivity extends AppCompatActivity {
     private ImageView routeSnapshotImage;
     private View[] heartRateBars;
     private View batteryChip;
+    private View bluetoothStatusChip;
+    private View bluetoothStatusDot;
     private View navDashboardItem;
     private View navAlertsItem;
     private View navLogItem;
@@ -100,6 +102,8 @@ public class DashboardActivity extends AppCompatActivity {
         routeSnapshotImage = findViewById(R.id.routeSnapshotImage);
         dashboardToolbar = findViewById(R.id.dashboardToolbar);
         batteryChip = findViewById(R.id.batteryChip);
+        bluetoothStatusChip = findViewById(R.id.bluetoothStatusChip);
+        bluetoothStatusDot = findViewById(R.id.bluetoothStatusDot);
         navDashboardItem = findViewById(R.id.navDashboardItem);
         navAlertsItem = findViewById(R.id.navAlertsItem);
         navLogItem = findViewById(R.id.navLogItem);
@@ -134,7 +138,7 @@ public class DashboardActivity extends AppCompatActivity {
     private void bindNavigation() {
         if (navDashboardItem != null) {
             navDashboardItem.setOnClickListener(v -> {
-                startActivity(new Intent(this, GpsNavigationActivity.class));
+                startActivity(NavigationIntentFactory.createGpsIntent(this));
                 finish();
             });
         }
@@ -162,10 +166,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         View activeRouteCard = findViewById(R.id.activeRouteCard);
         if (activeRouteCard != null) {
-            activeRouteCard.setOnClickListener(v -> {
-                Intent intent = new Intent(DashboardActivity.this, GpsNavigationActivity.class);
-                startActivity(intent);
-            });
+            activeRouteCard.setOnClickListener(v ->
+                    startActivity(NavigationIntentFactory.createGpsIntent(this)));
         }
 
         View detailedAnalysisButton = findViewById(R.id.btnDetailedAnalysis);
@@ -188,6 +190,15 @@ public class DashboardActivity extends AppCompatActivity {
         }
         if (bluetoothText != null) {
             bluetoothText.setText(isConnected ? getString(R.string.connected) : getString(R.string.bt_status_disconnected));
+            bluetoothText.setTextColor(Color.parseColor(isConnected ? "#22C55E" : "#EF4444"));
+        }
+        if (bluetoothStatusChip != null) {
+            bluetoothStatusChip.setBackgroundColor(Color.parseColor(isConnected ? "#1A22C55E" : "#1AEF4444"));
+        }
+        if (bluetoothStatusDot != null) {
+            bluetoothStatusDot.setBackgroundResource(isConnected
+                    ? android.R.drawable.presence_online
+                    : android.R.drawable.presence_busy);
         }
         if (batteryChip != null) {
             batteryChip.setVisibility(isConnected ? View.VISIBLE : View.GONE);

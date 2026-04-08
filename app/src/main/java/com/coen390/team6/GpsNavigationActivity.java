@@ -63,17 +63,19 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
 
     // UI
     private EditText etSearch;
-    private Button btnBack, btnStartRoute, btnExitRoute, btnRoutes;
+    private Button btnBack, btnStartRoute, btnExitRoute;
     private Button btnZoomIn, btnZoomOut, btnMyLocation;
-    private LinearLayout directionBanner, routeInfoPanel, timeLeftPanel;
+    private LinearLayout directionBanner, routeInfoPanel;
     private View fatigueStatusCard;
     private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
-    private TextView tvArrivalTime, tvArrivalAmPm, tvDistanceValue, tvRouteName;
-    private TextView tvTimeLeft, tvTimeLeftUnit, tvTrafficStatus;
+    private TextView tvArrivalTime, tvArrivalAmPm, tvDistanceValue;
+    private TextView tvTimeLeft, tvTimeLeftUnit;
     private TextView tvDirectionText, tvDirectionDetail, tvDistance;
     private TextView tvFatigueEmoji, tvFatigueScore, tvGpsHeartRate;
+    private String pendingRestoreDestination;
+    private boolean isRestoringNavigation;
 
     private boolean isNavigating = false;
     private final Handler sensorRefreshHandler = new Handler(Looper.getMainLooper());
@@ -101,6 +103,8 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
+        pendingRestoreDestination = NavigationSessionPreferences.getDestination(this);
     }
 
     private void bindViews() {
@@ -108,13 +112,11 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         btnBack = findViewById(R.id.btnBack);
         btnStartRoute = findViewById(R.id.btnStartRoute);
         btnExitRoute = findViewById(R.id.btnExitRoute);
-        btnRoutes = findViewById(R.id.btnRoutes);
         btnZoomIn = findViewById(R.id.btnZoomIn);
         btnZoomOut = findViewById(R.id.btnZoomOut);
         btnMyLocation = findViewById(R.id.btnMyLocation);
         directionBanner = findViewById(R.id.directionBanner);
         routeInfoPanel = findViewById(R.id.routeInfoPanel);
-        timeLeftPanel = findViewById(R.id.timeLeftPanel);
         fatigueStatusCard = findViewById(R.id.fatigueStatusCard);
         navAlertsItem = findViewById(R.id.navAlertsItem);
         navLogItem = findViewById(R.id.navLogItem);
@@ -122,10 +124,8 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         tvArrivalTime = findViewById(R.id.tvArrivalTime);
         tvArrivalAmPm = findViewById(R.id.tvArrivalAmPm);
         tvDistanceValue = findViewById(R.id.tvDistanceValue);
-        tvRouteName = findViewById(R.id.tvRouteName);
         tvTimeLeft = findViewById(R.id.tvTimeLeft);
         tvTimeLeftUnit = findViewById(R.id.tvTimeLeftUnit);
-        tvTrafficStatus = findViewById(R.id.tvTrafficStatus);
         tvDirectionText = findViewById(R.id.tvDirectionText);
         tvDirectionDetail = findViewById(R.id.tvDirectionDetail);
         tvDistance = findViewById(R.id.tvDistance);
@@ -228,6 +228,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
                 currentLocation = location;
                 LatLng myPos = new LatLng(location.getLatitude(), location.getLongitude());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPos, 15f));
+                restoreNavigationIfNeeded();
             }
         });
 
@@ -245,6 +246,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
                     currentLocation = loc;
                     // Update Firestore with live location (for fleet manager)
                     updateLocationInFirestore(loc);
+                    restoreNavigationIfNeeded();
                 }
             }
         };
@@ -365,8 +367,8 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
                 // Duration text
                 int hours = durationSeconds / 3600;
                 int minutes = (durationSeconds % 3600) / 60;
-                String timeLeftText = hours > 0 ? hours + "h " + minutes + "m" : minutes + "";
-                String timeLeftUnitText = hours > 0 ? "" : " min";
+                String timeLeftText = hours > 0 ? hours + "h " + minutes + "m" : String.valueOf(minutes);
+                String timeLeftUnitText = hours > 0 ? "" : "min";
 
                 runOnUiThread(() -> {
                     // Draw route on map
@@ -392,11 +394,9 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
                     // Update UI panels
                     tvArrivalTime.setText(arrivalTime);
                     tvArrivalAmPm.setText(arrivalAmPm);
-                    tvDistanceValue.setText(distanceText.replace(" km", "").replace(" mi", ""));
-                    tvRouteName.setText(endAddress.length() > 30 ? endAddress.substring(0, 30) + "..." : endAddress);
+                    tvDistanceValue.setText(distanceText);
                     tvTimeLeft.setText(timeLeftText);
                     tvTimeLeftUnit.setText(timeLeftUnitText);
-                    tvTrafficStatus.setText("Clear Traffic");
                     tvDirectionText.setText(firstInstruction);
                     tvDirectionDetail.setText(endAddress);
                     tvDistance.setText(stepDistance);
@@ -404,19 +404,21 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
                     // Show navigation UI
                     directionBanner.setVisibility(View.VISIBLE);
                     routeInfoPanel.setVisibility(View.VISIBLE);
-                    timeLeftPanel.setVisibility(View.VISIBLE);
-                    btnStartRoute.setVisibility(View.GONE);
                     btnExitRoute.setVisibility(View.VISIBLE);
-                    btnRoutes.setVisibility(View.VISIBLE);
+                    btnStartRoute.setVisibility(View.GONE);
                     etSearch.setVisibility(View.GONE);
 
                     isNavigating = true;
+                    isRestoringNavigation = false;
+                    pendingRestoreDestination = destination;
+                    NavigationSessionPreferences.saveDestination(this, destination);
                     if (!DrivingSessionPreferences.isActive(this)) {
                         DrivingSessionPreferences.start(this, System.currentTimeMillis());
                     }
                 });
 
             } catch (Exception e) {
+                isRestoringNavigation = false;
                 Log.e(TAG, "Direction API error", e);
                 runOnUiThread(() -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
@@ -425,16 +427,17 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
 
     private void exitNavigation() {
         isNavigating = false;
+        isRestoringNavigation = false;
+        pendingRestoreDestination = null;
         DrivingSessionPreferences.stop(this);
+        NavigationSessionPreferences.clear(this);
         if (currentRoute != null) currentRoute.remove();
         mMap.clear();
 
         directionBanner.setVisibility(View.GONE);
         routeInfoPanel.setVisibility(View.GONE);
-        timeLeftPanel.setVisibility(View.GONE);
         btnStartRoute.setVisibility(View.VISIBLE);
         btnExitRoute.setVisibility(View.GONE);
-        btnRoutes.setVisibility(View.GONE);
         etSearch.setVisibility(View.VISIBLE);
         etSearch.setText("");
 
@@ -505,8 +508,24 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
         super.onResume();
         refreshDriverOverlay();
         sensorRefreshHandler.post(sensorRefreshRunnable);
+        pendingRestoreDestination = NavigationSessionPreferences.getDestination(this);
         if (checkLocationPermission() && mMap != null) {
             enableMyLocation();
         }
+        restoreNavigationIfNeeded();
+    }
+
+    private void restoreNavigationIfNeeded() {
+        if (isNavigating || isRestoringNavigation || !DrivingSessionPreferences.isActive(this)) {
+            return;
+        }
+
+        String destination = pendingRestoreDestination;
+        if (destination == null || destination.trim().isEmpty() || currentLocation == null || mMap == null) {
+            return;
+        }
+
+        isRestoringNavigation = true;
+        searchAndRoute(destination);
     }
 }
