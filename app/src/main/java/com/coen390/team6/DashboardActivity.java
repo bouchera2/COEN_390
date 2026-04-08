@@ -183,6 +183,7 @@ public class DashboardActivity extends AppCompatActivity {
         float bpm = BleSensorPreferences.getBpm(this);
         DetailedAnalysisActivity.FatigueSnapshot fatigueStatus =
                 DetailedAnalysisActivity.getFatigueSnapshot(this);
+        String driverState = BleSensorPreferences.getDriverState(this);
         boolean fingerDetected = BleSensorPreferences.isFingerDetected(this);
 
         if (heartRateText != null) {
@@ -228,7 +229,11 @@ public class DashboardActivity extends AppCompatActivity {
 
         updateHeartRateBars(fingerDetected, avgBpm, bpm);
         updateDrivingTimeCard();
-        checkFatigueAndAlert(avgBpm > 0 ? avgBpm : Math.round(bpm), fatigueStatus.getScore());
+        checkFatigueAndAlert(
+                avgBpm > 0 ? avgBpm : Math.round(bpm),
+                fatigueStatus.getScore(),
+                driverState
+        );
     }
 
     private String formatHeartRate(boolean fingerDetected, int avgBpm, float bpm) {
@@ -333,8 +338,11 @@ public class DashboardActivity extends AppCompatActivity {
         return elapsedMs / 60000L;
     }
 
-    private void checkFatigueAndAlert(int currentHr, int fatigueScore) {
-        if (fatigueScore < FATIGUE_ALERT_THRESHOLD) {
+    private void checkFatigueAndAlert(int currentHr, int fatigueScore, String driverState) {
+        boolean shouldAlertForState =
+                "DROWSY".equals(driverState) || "STRESSED".equals(driverState);
+
+        if (!shouldAlertForState && fatigueScore < FATIGUE_ALERT_THRESHOLD) {
             fatigueAlertShown = false;
             return;
         }
@@ -349,11 +357,23 @@ public class DashboardActivity extends AppCompatActivity {
         long minutes = driveMinutes % 60L;
         String driveTime = String.format(java.util.Locale.US, "%dh %02dm", hours, minutes);
         long timestampMs = System.currentTimeMillis();
+        String alertTitle = "High Fatigue Risk";
         String alertMessage = "Critical fatigue detected. Immediate rest is recommended for driver safety.";
+        String alertLevel = "HIGH";
+
+        if ("DROWSY".equals(driverState)) {
+            alertTitle = "Driver Drowsiness Detected";
+            alertMessage = "Drowsy state detected from the live thresholds. Immediate rest is recommended.";
+            alertLevel = "DROWSY";
+        } else if ("STRESSED".equals(driverState)) {
+            alertTitle = "Driver Stress Detected";
+            alertMessage = "Stressed state detected from the live thresholds. Check the driver condition.";
+            alertLevel = "STRESSED";
+        }
 
         AlertHistoryPreferences.saveActiveAlert(
                 this,
-                "High Fatigue Risk",
+                alertTitle,
                 alertMessage,
                 fatigueScore,
                 currentHr,
@@ -363,14 +383,14 @@ public class DashboardActivity extends AppCompatActivity {
         FatigueAlertNotifier.showFatigueAlert(
                 this,
                 currentHr,
-                "HIGH",
+                alertLevel,
                 driveTime,
                 driveMinutes
         );
 
         Intent alertIntent = new Intent(this, FatigueAlertActivity.class);
         alertIntent.putExtra("heartRate", currentHr);
-        alertIntent.putExtra("fatigueLevel", "HIGH");
+        alertIntent.putExtra("fatigueLevel", alertLevel);
         alertIntent.putExtra("driveTime", driveTime);
         alertIntent.putExtra("driveTimeMinutes", driveMinutes);
         alertIntent.putExtra("fatigueScore", fatigueScore);

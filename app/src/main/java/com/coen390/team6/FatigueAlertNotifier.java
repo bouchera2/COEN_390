@@ -84,10 +84,10 @@ public final class FatigueAlertNotifier {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
-                .setContentTitle("Fatigue detected")
-                .setContentText("Critical drowsiness detected. Open alert now.")
+                .setContentTitle(getAlertTitle(fatigueLevel))
+                .setContentText(getAlertMessage(fatigueLevel))
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Critical drowsiness detected. Review the fatigue alert immediately."))
+                        .bigText(getAlertMessage(fatigueLevel)))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -103,5 +103,25 @@ public final class FatigueAlertNotifier {
 
     public static void cancel(Context context) {
         NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID);
+    }
+
+    private static String getAlertTitle(String fatigueLevel) {
+        if ("STRESSED".equals(fatigueLevel)) {
+            return "Stress detected";
+        }
+        if ("DROWSY".equals(fatigueLevel)) {
+            return "Drowsiness detected";
+        }
+        return "Fatigue detected";
+    }
+
+    private static String getAlertMessage(String fatigueLevel) {
+        if ("STRESSED".equals(fatigueLevel)) {
+            return "Elevated stress detected. Review the driver alert now.";
+        }
+        if ("DROWSY".equals(fatigueLevel)) {
+            return "Critical drowsiness detected. Review the driver alert immediately.";
+        }
+        return "Critical fatigue detected. Open the alert now.";
     }
 }

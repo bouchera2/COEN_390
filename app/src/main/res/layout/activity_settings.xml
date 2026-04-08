@@ -163,6 +163,17 @@
                             android:text=""
                             android:textColor="#94A3B8"
                             android:textSize="13sp" />
+
+                        <Button
+                            android:id="@+id/btnOpenBlePage"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Open BLE Page"
+                            android:textAllCaps="false"
+                            android:textColor="#F8FAFC"
+                            app:strokeColor="#334155" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -220,8 +231,69 @@
                                 android:padding="18dp">
 
                                 <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Demo Presets"
+                                    android:textAllCaps="true"
+                                    android:textColor="#135BEC"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="Use these buttons to reinterpret the same live readings as drowsy, normal, or stressed during the demo."
+                                    android:textColor="#94A3B8"
+                                    android:textSize="13sp" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="16dp"
+                                    android:orientation="horizontal"
+                                    android:weightSum="3">
+
+                                    <Button
+                                        android:id="@+id/btnDemoDrowsy"
+                                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                        android:layout_width="0dp"
+                                        android:layout_height="48dp"
+                                        android:layout_weight="1"
+                                        android:text="Drowsy"
+                                        android:textAllCaps="false"
+                                        android:textColor="#CBD5E1"
+                                        app:strokeColor="#475569" />
+
+                                    <Button
+                                        android:id="@+id/btnDemoNormal"
+                                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                        android:layout_width="0dp"
+                                        android:layout_height="48dp"
+                                        android:layout_marginStart="10dp"
+                                        android:layout_weight="1"
+                                        android:text="Normal"
+                                        android:textAllCaps="false"
+                                        android:textColor="#CBD5E1"
+                                        app:strokeColor="#475569" />
+
+                                    <Button
+                                        android:id="@+id/btnDemoStressed"
+                                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                        android:layout_width="0dp"
+                                        android:layout_height="48dp"
+                                        android:layout_marginStart="10dp"
+                                        android:layout_weight="1"
+                                        android:text="Stressed"
+                                        android:textAllCaps="false"
+                                        android:textColor="#CBD5E1"
+                                        app:strokeColor="#475569" />
+                                </LinearLayout>
+
+                                <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="20dp"
                                     android:text="Drowsy Detection"
                                     android:textAllCaps="true"
                                     android:textColor="#EF4444"
@@ -262,14 +334,6 @@
                                         android:textStyle="bold" />
                                 </LinearLayout>
 
-                                <SeekBar
-                                    android:id="@+id/seekBpmDrowsy"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
-                                    android:progressTint="#EF4444"
-                                    android:thumbTint="#EF4444" />
-
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -296,34 +360,10 @@
                                         android:textStyle="bold" />
                                 </LinearLayout>
 
-                                <SeekBar
-                                    android:id="@+id/seekGsrDrowsy"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
-                                    android:progressTint="#EF4444"
-                                    android:thumbTint="#EF4444" />
-                            </LinearLayout>
-                        </com.google.android.material.card.MaterialCardView>
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="14dp"
-                            android:backgroundTint="#101622"
-                            app:cardCornerRadius="18dp"
-                            app:strokeColor="#334155"
-                            app:strokeWidth="1dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:padding="18dp">
-
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginTop="22dp"
                                     android:text="Stress Detection"
                                     android:textAllCaps="true"
                                     android:textColor="#F97316"
@@ -364,14 +404,6 @@
                                         android:textStyle="bold" />
                                 </LinearLayout>
 
-                                <SeekBar
-                                    android:id="@+id/seekBpmStressed"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
-                                    android:progressTint="#F97316"
-                                    android:thumbTint="#F97316" />
-
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -397,27 +429,8 @@
                                         android:textSize="18sp"
                                         android:textStyle="bold" />
                                 </LinearLayout>
-
-                                <SeekBar
-                                    android:id="@+id/seekGsrStressed"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="6dp"
-                                    android:progressTint="#F97316"
-                                    android:thumbTint="#F97316" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
-
-                        <Button
-                            android:id="@+id/btnResetThresholds"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="18dp"
-                            android:text="Reset Thresholds"
-                            android:textAllCaps="false"
-                            android:textColor="#CBD5E1"
-                            app:strokeColor="#475569" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 

@@ -147,10 +147,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-        if (checkPermissions()) startScanAndConnect();
-    }
-
     private void startScanAndConnect() {
+        if (isDeviceConnected()) {
+            updateStatus("Status: Already connected", android.R.color.holo_green_dark);
+            updateScanStatus("Device already connected");
+            return;
+        }
+
         if (bluetoothAdapter == null) {
             updateStatus("Status: Bluetooth unavailable", android.R.color.holo_red_dark);
             updateScanStatus("Bluetooth unavailable");
@@ -200,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        closeCurrentGatt();
         updateStatus("Connecting...", android.R.color.holo_orange_dark);
 
         bluetoothGatt = esp32Device.connectGatt(this, false, new BluetoothGattCallback() {
@@ -209,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
                 if (newState == android.bluetooth.BluetoothProfile.STATE_CONNECTED) {
                     Log.d(TAG, "Connected to ESP32");
                     reconnectDelay = 2000;
+                    bluetoothGatt = gatt;
                     BleSensorPreferences.setConnected(MainActivity.this, true);
 
                     runOnUiThread(() -> {
@@ -221,6 +226,9 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (newState == android.bluetooth.BluetoothProfile.STATE_DISCONNECTED) {
                     Log.d(TAG, "Disconnected from ESP32");
+                    if (bluetoothGatt == gatt) {
+                        closeCurrentGatt();
+                    }
                     BleSensorPreferences.setConnected(MainActivity.this, false);
 
                     runOnUiThread(() -> {
@@ -310,47 +318,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // Scanning
-
-    private void startScanAndConnect() {
-        if (bluetoothAdapter == null) {
-            updateStatus("Bluetooth unavailable", android.R.color.holo_red_dark);
-            return;
-        }
-        if (!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
-
-        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
-        if (scanner == null) {
-            updateStatus("BLE scanner unavailable", android.R.color.holo_red_dark);
-            return;
-        }
-        if (isScanning) stopBleScan();
-
-        updateStatus("Scanning...", android.R.color.holo_orange_dark);
-        isScanning = true;
-
-        ScanFilter filter = new ScanFilter.Builder()
-                .setServiceUuid(new ParcelUuid(SERVICE_UUID))
-                .build();
-        ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .build();
-        scanner.startScan(Collections.singletonList(filter), settings, scanCallback);
-
-        scanHandler.postDelayed(() -> {
-            if (isScanning) {
-                stopBleScan();
-                updateStatus("Device not found", android.R.color.holo_red_dark);
-            }
-        }, 10000);
-    }
-
     private void stopBleScan() {
         if (bluetoothAdapter == null) { isScanning = false; return; }
         BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
         if (scanner != null) scanner.stopScan(scanCallback);
         scanHandler.removeCallbacksAndMessages(null);
         isScanning = false;
+    }
+
+    private boolean isDeviceConnected() {
+        return bluetoothGatt != null && BleSensorPreferences.isConnected(this);
+    }
+
+    private void closeCurrentGatt() {
+        if (bluetoothGatt == null) {
+            return;
+        }
+        try {
+            bluetoothGatt.disconnect();
+        } catch (Exception ignored) {
+        }
+        try {
+            bluetoothGatt.close();
+        } catch (Exception ignored) {
+        }
+        bluetoothGatt = null;
     }
 
     private void reconnectDevice() {
@@ -388,18 +380,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void openGpsHome() {
-        if (hasOpenedGps) {
-            return;
+    private boolean checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            String[] permissions = new String[] {
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT
+            };
+            boolean missingPermission = false;
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(this, permission)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    missingPermission = true;
+                    break;
+                }
+            }
+            if (missingPermission) {
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+                return false;
+            }
+            return true;
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSION_REQUEST_CODE);
             return false;
         }
         return true;
+    }
+
+    private void openGpsHome() {
+        if (hasOpenedDashboard) {
+            return;
+        }
+        hasOpenedDashboard = true;
+        startActivity(new Intent(MainActivity.this, GpsNavigationActivity.class));
     }
 
     @Override
@@ -430,10 +447,7 @@ public class MainActivity extends AppCompatActivity {
         shouldReconnect = false;
         stopBleScan();
         reconnectHandler.removeCallbacksAndMessages(null);
-        if (bluetoothGatt != null) {
-            bluetoothGatt.close();
-            bluetoothGatt = null;
-        }
+        closeCurrentGatt();
         super.onDestroy();
     }
 }

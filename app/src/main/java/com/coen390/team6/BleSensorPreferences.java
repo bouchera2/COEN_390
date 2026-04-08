@@ -97,6 +97,9 @@ public final class BleSensorPreferences {
     public static String getDriverState(Context context) {
         return getPrefs(context).getString(KEY_DRIVER_STATE, "UNKNOWN");
     }
+    public static void setDriverState(Context context, String driverState) {
+        getPrefs(context).edit().putString(KEY_DRIVER_STATE, driverState).apply();
+    }
     public static boolean isPossibleCrash(Context context) {
         return getPrefs(context).getBoolean(KEY_POSSIBLE_CRASH, false);
     }

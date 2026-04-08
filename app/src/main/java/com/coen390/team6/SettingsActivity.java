@@ -1,10 +1,10 @@
 package com.coen390.team6;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -30,20 +30,12 @@ public class SettingsActivity extends AppCompatActivity {
     private View navSettingsItem;
 
     // ── Threshold UI ─────────────────────────────────────────────────────────
-    // BPM DROWSY max  (range 40–90, default 60)
-    private SeekBar  seekBpmDrowsy;
+    private Button btnDemoDrowsy;
+    private Button btnDemoNormal;
+    private Button btnDemoStressed;
     private TextView tvBpmDrowsyVal;
-
-    // BPM STRESSED min (range 70–130, default 95)
-    private SeekBar  seekBpmStressed;
     private TextView tvBpmStressedVal;
-
-    // GSR DROWSY max ratio (range 0.50–1.20, step 0.01, default 0.90)
-    private SeekBar  seekGsrDrowsy;
     private TextView tvGsrDrowsyVal;
-
-    // GSR STRESSED min ratio (range 0.70–1.50, step 0.01, default 1.00)
-    private SeekBar  seekGsrStressed;
     private TextView tvGsrStressedVal;
 
     private TextView tvDriverName;
@@ -51,17 +43,8 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView tvDeviceStatus;
     private TextView tvDeviceSummary;
 
-    // Reset button
-    private Button btnResetThresholds;
     private Button btnEditPersonalInfo;
-
-    // ── SeekBar config ───────────────────────────────────────────────────────
-    private static final int BPM_DROWSY_MIN   = 40;
-    private static final int BPM_STRESSED_MIN_OFFSET = 70;
-
-    // GSR seekbars: stored as int (value * 100), e.g. 0.90 → 90
-    private static final int GSR_DROWSY_SEEKBAR_OFFSET   = 50;  // 0.50
-    private static final int GSR_STRESSED_SEEKBAR_OFFSET = 70;  // 0.70
+    private Button btnOpenBlePage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,16 +72,15 @@ public class SettingsActivity extends AppCompatActivity {
         navLogItem       = findViewById(R.id.navLogItem);
         navSettingsItem  = findViewById(R.id.navSettingsItem);
 
-        seekBpmDrowsy    = findViewById(R.id.seekBpmDrowsy);
+        btnDemoDrowsy    = findViewById(R.id.btnDemoDrowsy);
+        btnDemoNormal    = findViewById(R.id.btnDemoNormal);
+        btnDemoStressed  = findViewById(R.id.btnDemoStressed);
         tvBpmDrowsyVal   = findViewById(R.id.tvBpmDrowsyVal);
-        seekBpmStressed  = findViewById(R.id.seekBpmStressed);
         tvBpmStressedVal = findViewById(R.id.tvBpmStressedVal);
-        seekGsrDrowsy    = findViewById(R.id.seekGsrDrowsy);
         tvGsrDrowsyVal   = findViewById(R.id.tvGsrDrowsyVal);
-        seekGsrStressed  = findViewById(R.id.seekGsrStressed);
         tvGsrStressedVal = findViewById(R.id.tvGsrStressedVal);
-        btnResetThresholds = findViewById(R.id.btnResetThresholds);
         btnEditPersonalInfo = findViewById(R.id.btnEditPersonalInfo);
+        btnOpenBlePage = findViewById(R.id.btnOpenBlePage);
         tvDriverName = findViewById(R.id.tvDriverName);
         tvDriverEmail = findViewById(R.id.tvDriverEmail);
         tvDeviceStatus = findViewById(R.id.tvDeviceStatus);
@@ -110,6 +92,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onResume();
         populateAccountSummary();
         updateConnectionSummary();
+        refreshThresholdSummary();
+        updateDemoButtonState();
     }
 
     //  Navigation
@@ -132,89 +116,77 @@ public class SettingsActivity extends AppCompatActivity {
             intent.putExtra(DriverProfileSetupActivity.EXTRA_EDIT_MODE, true);
             startActivity(intent);
         });
+        btnOpenBlePage.setOnClickListener(v ->
+                startActivity(new Intent(this, MainActivity.class)));
     }
 
     // ── Thresholds
     private void bindThresholdControls() {
-        // ── BPM DROWSY MAX (seekbar range 0-50 → actual 40-90)
-        seekBpmDrowsy.setMax(50);
-        int bpmDrowsyCurrent = ThresholdPreferences.getBpmDrowsyMax(this);
-        seekBpmDrowsy.setProgress(bpmDrowsyCurrent - BPM_DROWSY_MIN);
-        tvBpmDrowsyVal.setText("< " + bpmDrowsyCurrent + " BPM");
+        btnDemoDrowsy.setOnClickListener(v -> applyDemoMode(ThresholdPreferences.DEMO_MODE_DROWSY));
+        btnDemoNormal.setOnClickListener(v -> applyDemoMode(ThresholdPreferences.DEMO_MODE_NORMAL));
+        btnDemoStressed.setOnClickListener(v -> applyDemoMode(ThresholdPreferences.DEMO_MODE_STRESSED));
 
-        seekBpmDrowsy.setOnSeekBarChangeListener(new SimpleSeekBarListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int val = progress + BPM_DROWSY_MIN;
-                tvBpmDrowsyVal.setText("< " + val + " BPM");
-                if (fromUser) {
-                    ThresholdPreferences.setBpmDrowsyMax(SettingsActivity.this, val);
-                }
-            }
-        });
+        refreshThresholdSummary();
+        updateDemoButtonState();
+    }
 
-        // ── BPM STRESSED MIN (seekbar range 0-60 → actual 70-130)
-        seekBpmStressed.setMax(60);
-        int bpmStressedCurrent = ThresholdPreferences.getBpmStressedMin(this);
-        seekBpmStressed.setProgress(bpmStressedCurrent - BPM_STRESSED_MIN_OFFSET);
-        tvBpmStressedVal.setText("> " + bpmStressedCurrent + " BPM");
+    private void applyDemoMode(String demoMode) {
+        int avgBpm = BleSensorPreferences.getAvgBpm(this);
+        float bpm = BleSensorPreferences.getBpm(this);
+        float gsrFiltered = BleSensorPreferences.getGsrFiltered(this);
+        float gsrBaseline = BleSensorPreferences.getGsrBaseline(this);
+        int displayBpm = avgBpm > 0 ? avgBpm : Math.round(bpm);
 
-        seekBpmStressed.setOnSeekBarChangeListener(new SimpleSeekBarListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int val = progress + BPM_STRESSED_MIN_OFFSET;
-                tvBpmStressedVal.setText("> " + val + " BPM");
-                if (fromUser) {
-                    ThresholdPreferences.setBpmStressedMin(SettingsActivity.this, val);
-                }
-            }
-        });
+        if (ThresholdPreferences.DEMO_MODE_NORMAL.equals(demoMode)) {
+            ThresholdPreferences.resetToDefaults(this);
+        } else {
+            ThresholdPreferences.applyDemoMode(demoMode, displayBpm, gsrFiltered, gsrBaseline);
+        }
 
-        // ── GSR DROWSY MAX ratio (seekbar range 0-70 → 0.50-1.20)
-        seekGsrDrowsy.setMax(70);
-        int gsrDrowsyProgress = Math.round(ThresholdPreferences.getGsrDrowsyMax(this) * 100) - GSR_DROWSY_SEEKBAR_OFFSET;
-        seekGsrDrowsy.setProgress(gsrDrowsyProgress);
+        republishCurrentDriverState(displayBpm, gsrFiltered, gsrBaseline);
+        refreshThresholdSummary();
+        updateDemoButtonState();
+    }
+
+    private void republishCurrentDriverState(int displayBpm, float gsrFiltered, float gsrBaseline) {
+        boolean baselineReady = gsrBaseline > 0.01f;
+        String currentState = ThresholdPreferences.classifyDriverState(
+                this,
+                displayBpm,
+                gsrFiltered,
+                gsrBaseline,
+                baselineReady
+        );
+        BleSensorPreferences.setDriverState(this, currentState);
+    }
+
+    private void refreshThresholdSummary() {
+        tvBpmDrowsyVal.setText("< " + ThresholdPreferences.getBpmDrowsyMax(this) + " BPM");
+        tvBpmStressedVal.setText("> " + ThresholdPreferences.getBpmStressedMin(this) + " BPM");
         tvGsrDrowsyVal.setText(String.format(Locale.getDefault(), "< %.2f",
                 ThresholdPreferences.getGsrDrowsyMax(this)));
-
-        seekGsrDrowsy.setOnSeekBarChangeListener(new SimpleSeekBarListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float val = (progress + GSR_DROWSY_SEEKBAR_OFFSET) / 100f;
-                tvGsrDrowsyVal.setText(String.format(Locale.getDefault(), "< %.2f", val));
-                if (fromUser) {
-                    ThresholdPreferences.setGsrDrowsyMax(SettingsActivity.this, val);
-                }
-            }
-        });
-
-        // ── GSR STRESSED MIN ratio (seekbar range 0-80 → 0.70-1.50) ─────────
-        seekGsrStressed.setMax(80);
-        int gsrStressedProgress = Math.round(ThresholdPreferences.getGsrStressedMin(this) * 100) - GSR_STRESSED_SEEKBAR_OFFSET;
-        seekGsrStressed.setProgress(gsrStressedProgress);
         tvGsrStressedVal.setText(String.format(Locale.getDefault(), "> %.2f",
                 ThresholdPreferences.getGsrStressedMin(this)));
+    }
 
-        seekGsrStressed.setOnSeekBarChangeListener(new SimpleSeekBarListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float val = (progress + GSR_STRESSED_SEEKBAR_OFFSET) / 100f;
-                tvGsrStressedVal.setText(String.format(Locale.getDefault(), "> %.2f", val));
-                if (fromUser) {
-                    ThresholdPreferences.setGsrStressedMin(SettingsActivity.this, val);
-                }
-            }
-        });
+    private void updateDemoButtonState() {
+        String activeMode = ThresholdPreferences.getActiveDemoMode();
+        styleDemoButton(btnDemoDrowsy,
+                ThresholdPreferences.DEMO_MODE_DROWSY.equals(activeMode),
+                0xFFEF4444);
+        styleDemoButton(btnDemoNormal,
+                ThresholdPreferences.DEMO_MODE_NORMAL.equals(activeMode),
+                0xFF22C55E);
+        styleDemoButton(btnDemoStressed,
+                ThresholdPreferences.DEMO_MODE_STRESSED.equals(activeMode),
+                0xFFF97316);
+    }
 
-        // ── Reset button
-        btnResetThresholds.setOnClickListener(v -> {
-            ThresholdPreferences.resetToDefaults(this);
-            // Re-apply seekbars to default values
-            seekBpmDrowsy.setProgress(ThresholdPreferences.DEFAULT_BPM_DROWSY_MAX - BPM_DROWSY_MIN);
-            seekBpmStressed.setProgress(ThresholdPreferences.DEFAULT_BPM_STRESSED_MIN - BPM_STRESSED_MIN_OFFSET);
-            seekGsrDrowsy.setProgress(Math.round(ThresholdPreferences.DEFAULT_GSR_DROWSY_MAX * 100) - GSR_DROWSY_SEEKBAR_OFFSET);
-            seekGsrStressed.setProgress(Math.round(ThresholdPreferences.DEFAULT_GSR_STRESSED_MIN * 100) - GSR_STRESSED_SEEKBAR_OFFSET);
-        });
+    private void styleDemoButton(Button button, boolean active, int activeColor) {
+        int backgroundColor = active ? activeColor : 0xFF101622;
+        int textColor = active ? 0xFFF8FAFC : 0xFFCBD5E1;
+        button.setBackgroundTintList(ColorStateList.valueOf(backgroundColor));
+        button.setTextColor(textColor);
     }
 
     private void populateAccountSummary() {
@@ -289,9 +261,4 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    // ── Helper: blank SeekBar listener
-    private abstract static class SimpleSeekBarListener implements SeekBar.OnSeekBarChangeListener {
-        @Override public void onStartTrackingTouch(SeekBar seekBar) {}
-        @Override public void onStopTrackingTouch(SeekBar seekBar)  {}
-    }
 }

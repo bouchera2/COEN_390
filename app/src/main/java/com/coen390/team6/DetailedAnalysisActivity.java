@@ -79,35 +79,15 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
             return waitingSnapshot();
         }
 
-        int score = Math.round(computeFatigueScore(displayBpm, gsrFiltered, gsrBaseline));
-        if (score < 30) {
-            return new FatigueSnapshot(
-                    score,
-                    "Normal",
-                    "🙂",
-                    "Fatigue Risk: Low",
-                    "Driver metrics are within a normal range.",
-                    Color.parseColor("#22C55E")
-            );
-        }
-        if (score < 60) {
-            return new FatigueSnapshot(
-                    score,
-                    "Fatigued",
-                    "😐",
-                    "Fatigue Risk: Moderate",
-                    "Fatigue signs are increasing. Plan a break soon.",
-                    Color.parseColor("#F97316")
-            );
-        }
-        return new FatigueSnapshot(
-                score,
-                "Drowsy",
-                "☹",
-                "Fatigue Risk: High",
-                "Critical fatigue detected. Stop and rest.",
-                Color.parseColor("#EF4444")
+        String state = ThresholdPreferences.classifyDriverState(
+                context,
+                displayBpm,
+                gsrFiltered,
+                gsrBaseline,
+                gsrBaseline > 0.01f
         );
+        BleSensorPreferences.setDriverState(context, state);
+        return snapshotForDriverState(state);
     }
 
     public static float computeFatigueScore(int bpm, float gsrFiltered, float gsrBaseline) {
@@ -147,6 +127,53 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
                 "Waiting for enough sensor data to estimate fatigue.",
                 Color.parseColor("#94A3B8")
         );
+    }
+
+    private static FatigueSnapshot snapshotForDriverState(String state) {
+        if (state == null) {
+            return waitingSnapshot();
+        }
+
+        switch (state) {
+            case "DROWSY":
+                return new FatigueSnapshot(
+                        92,
+                        "Drowsy",
+                        "☹",
+                        "Fatigue Risk: High",
+                        "Low heart rate and GSR detected. Stop and rest.",
+                        Color.parseColor("#EF4444")
+                );
+            case "STRESSED":
+                return new FatigueSnapshot(
+                        72,
+                        "Stressed",
+                        "⚠",
+                        "Stress Risk: Elevated",
+                        "Elevated heart rate and GSR detected. Check the driver condition.",
+                        Color.parseColor("#F97316")
+                );
+            case "NORMAL":
+                return new FatigueSnapshot(
+                        18,
+                        "Normal",
+                        "🙂",
+                        "Fatigue Risk: Low",
+                        "Driver metrics are within a normal range.",
+                        Color.parseColor("#22C55E")
+                );
+            case "CALIBRATING":
+                return new FatigueSnapshot(
+                        0,
+                        "Calibrating",
+                        "•",
+                        "Fatigue Risk: Waiting",
+                        "Calibrating GSR baseline. Please wait.",
+                        Color.parseColor("#94A3B8")
+                );
+            default:
+                return waitingSnapshot();
+        }
     }
 
     // =========================================================================
