@@ -245,7 +245,13 @@ public class DriverLogActivity extends AppCompatActivity {
             return;
         }
 
-        String notes = "";
+        /*String notes = "";*/
+        String notes = InputValidator.getSanitizedText(editTextNotes);
+        if (InputValidator.containsDangerousInput(editTextNotes.getText().toString())) {
+            Toast.makeText(this, "Invalid input detected", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (editTextNotes.getText() != null) {
             notes = editTextNotes.getText().toString().trim();
         }
