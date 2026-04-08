@@ -478,44 +478,15 @@
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:contentDescription="Dashboard"
-                    android:src="@drawable/ic_house"
+                    android:contentDescription="GPS"
+                    android:src="@android:drawable/ic_menu_mylocation"
                     android:tint="#64748B" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Dashboard"
-                    android:textAllCaps="true"
-                    android:textColor="#64748B"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/navLogItem"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:contentDescription="Logs"
-                    android:src="@drawable/ic_clipboard_list"
-                    android:tint="#64748B" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Logs"
+                    android:text="GPS"
                     android:textAllCaps="true"
                     android:textColor="#64748B"
                     android:textSize="10sp"
@@ -545,6 +516,35 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Alerts"
+                    android:textAllCaps="true"
+                    android:textColor="#64748B"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/navLogItem"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:contentDescription="Logs"
+                    android:src="@drawable/ic_clipboard_list"
+                    android:tint="#64748B" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Logs"
                     android:textAllCaps="true"
                     android:textColor="#64748B"
                     android:textSize="10sp"

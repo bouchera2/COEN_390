@@ -49,7 +49,11 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothGatt bluetoothGatt;
 
     private Button btnScanConnect;
+    private Button btnRefresh;
     private TextView tvStatus;
+    private TextView tvScanStatus;
+    private TextView tvDeviceName;
+    private TextView tvSignalStrength;
 
     private BluetoothDevice esp32Device;
     private final Handler reconnectHandler = new Handler(Looper.getMainLooper());
@@ -72,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
             if (TARGET_DEVICE_NAME.equals(deviceName)) {
                 stopBleScan();
                 esp32Device = device;
+                String matchedDeviceName = deviceName;
+                int deviceRssi = result.getRssi();
+                runOnUiThread(() -> updateDeviceCard(matchedDeviceName, deviceRssi));
                 connectToDevice();
             }
         }
@@ -81,7 +88,10 @@ public class MainActivity extends AppCompatActivity {
             super.onScanFailed(errorCode);
             isScanning = false;
             Log.d(TAG, "BLE scan failed: " + errorCode);
-            runOnUiThread(() -> updateStatus("Scan failed", android.R.color.holo_red_dark));
+            runOnUiThread(() -> {
+                updateStatus("Status: Scan failed", android.R.color.holo_red_dark);
+                updateScanStatus("Scan failed");
+            });
         }
     };
 
@@ -110,6 +120,12 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
+        btnScanConnect = findViewById(R.id.btnScan);
+        btnRefresh = findViewById(R.id.btnRefresh);
+        tvStatus = findViewById(R.id.tvStatus);
+        tvScanStatus = findViewById(R.id.tvScanStatus);
+        tvDeviceName = findViewById(R.id.tvDeviceName);
+        tvSignalStrength = findViewById(R.id.tvSignalStrength);
         BleSensorPreferences.setConnected(this, false);
 
         BluetoothManager bluetoothManager = getSystemService(BluetoothManager.class);
@@ -118,11 +134,63 @@ public class MainActivity extends AppCompatActivity {
         btnScanConnect.setOnClickListener(v -> {
             if (checkPermissions()) startScanAndConnect();
         });
+        if (btnRefresh != null) {
+            btnRefresh.setOnClickListener(v -> {
+                if (checkPermissions()) {
+                    startScanAndConnect();
+                }
+            });
+        }
+        // Automatic Connection
+        if (checkPermissions()) {
+            startScanAndConnect();
+        }
+    }
 
         if (checkPermissions()) startScanAndConnect();
     }
 
-    //  BLE connection state
+    private void startScanAndConnect() {
+        if (bluetoothAdapter == null) {
+            updateStatus("Status: Bluetooth unavailable", android.R.color.holo_red_dark);
+            updateScanStatus("Bluetooth unavailable");
+            return;
+        }
+
+        if (!bluetoothAdapter.isEnabled()) {
+            bluetoothAdapter.enable();
+        }
+
+        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+        if (scanner == null) {
+            updateStatus("Status: BLE scanner unavailable", android.R.color.holo_red_dark);
+            updateScanStatus("Scanner unavailable");
+            return;
+        }
+
+        if (isScanning) {
+            stopBleScan();
+        }
+
+        updateStatus("Status: Scanning...", android.R.color.holo_orange_dark);
+        updateScanStatus("Scanning...");
+        isScanning = true;
+        ScanFilter filter = new ScanFilter.Builder()
+                .setServiceUuid(new ParcelUuid(SERVICE_UUID))
+                .build();
+        ScanSettings settings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .build();
+        scanner.startScan(Collections.singletonList(filter), settings, scanCallback);
+
+        scanHandler.postDelayed(() -> {
+            if (isScanning) {
+                stopBleScan();
+                updateStatus("Status: Device not found", android.R.color.holo_red_dark);
+                updateScanStatus("Device not found");
+            }
+        }, 10000);
+    }
 
     private void connectToDevice() {
         if (esp32Device == null) return;
@@ -144,13 +212,9 @@ public class MainActivity extends AppCompatActivity {
                     BleSensorPreferences.setConnected(MainActivity.this, true);
 
                     runOnUiThread(() -> {
-                        updateStatus("Connected ✓", android.R.color.holo_green_dark);
-                        // Navigate to dashboard ONCE, but DO NOT call finish()
-                        // MainActivity stays alive to keep the BLE connection open
-                        if (!hasOpenedDashboard) {
-                            hasOpenedDashboard = true;
-                            startActivity(new Intent(MainActivity.this, GpsNavigationActivity.class));
-                        }
+                        updateStatus("Status: Connected", android.R.color.holo_green_dark);
+                        updateScanStatus("Connected");
+                        openGpsHome();
                     });
 
                     gatt.discoverServices();
@@ -158,9 +222,14 @@ public class MainActivity extends AppCompatActivity {
                 } else if (newState == android.bluetooth.BluetoothProfile.STATE_DISCONNECTED) {
                     Log.d(TAG, "Disconnected from ESP32");
                     BleSensorPreferences.setConnected(MainActivity.this, false);
-                    hasOpenedDashboard = false; // allow re-open after reconnect
-                    runOnUiThread(() -> updateStatus("Not Connected", android.R.color.holo_red_dark));
-                    if (shouldReconnect) reconnectDevice();
+
+                    runOnUiThread(() -> {
+                        updateStatus("Status: Not Connected", android.R.color.holo_red_dark);
+                        updateScanStatus("Disconnected");
+                    });
+                    if (shouldReconnect) {
+                        reconnectDevice();
+                    }
                 }
             }
 
@@ -296,14 +365,32 @@ public class MainActivity extends AppCompatActivity {
 
     // Permissions
 
-    private boolean checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                && (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
-                    PERMISSION_REQUEST_CODE);
-            return false;
+    private void updateScanStatus(String statusText) {
+        if (tvScanStatus != null) {
+            tvScanStatus.setText(statusText);
+        }
+    }
+
+    private void updateDeviceCard(String deviceName, int rssi) {
+        if (tvDeviceName != null && deviceName != null && !deviceName.isEmpty()) {
+            tvDeviceName.setText(deviceName);
+        }
+        if (tvSignalStrength != null) {
+            String strength;
+            if (rssi >= -60) {
+                strength = "Strong signal";
+            } else if (rssi >= -75) {
+                strength = "Good signal";
+            } else {
+                strength = "Weak signal";
+            }
+            tvSignalStrength.setText("\uD83D\uDCF6 " + strength);
+        }
+    }
+
+    private void openGpsHome() {
+        if (hasOpenedGps) {
+            return;
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

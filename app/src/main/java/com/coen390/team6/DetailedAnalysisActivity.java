@@ -1,5 +1,6 @@
 package com.coen390.team6;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,6 +65,89 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
             refreshHandler.postDelayed(this, 1000);
         }
     };
+
+    public static FatigueSnapshot getFatigueSnapshot(Context context) {
+        boolean connected = BleSensorPreferences.isConnected(context);
+        boolean fingerDetected = BleSensorPreferences.isFingerDetected(context);
+        int avgBpm = BleSensorPreferences.getAvgBpm(context);
+        float bpm = BleSensorPreferences.getBpm(context);
+        float gsrFiltered = BleSensorPreferences.getGsrFiltered(context);
+        float gsrBaseline = BleSensorPreferences.getGsrBaseline(context);
+
+        int displayBpm = avgBpm > 0 ? avgBpm : Math.round(bpm);
+        if (!connected || !fingerDetected || displayBpm <= 0) {
+            return waitingSnapshot();
+        }
+
+        int score = Math.round(computeFatigueScore(displayBpm, gsrFiltered, gsrBaseline));
+        if (score < 30) {
+            return new FatigueSnapshot(
+                    score,
+                    "Normal",
+                    "🙂",
+                    "Fatigue Risk: Low",
+                    "Driver metrics are within a normal range.",
+                    Color.parseColor("#22C55E")
+            );
+        }
+        if (score < 60) {
+            return new FatigueSnapshot(
+                    score,
+                    "Fatigued",
+                    "😐",
+                    "Fatigue Risk: Moderate",
+                    "Fatigue signs are increasing. Plan a break soon.",
+                    Color.parseColor("#F97316")
+            );
+        }
+        return new FatigueSnapshot(
+                score,
+                "Drowsy",
+                "☹",
+                "Fatigue Risk: High",
+                "Critical fatigue detected. Stop and rest.",
+                Color.parseColor("#EF4444")
+        );
+    }
+
+    public static float computeFatigueScore(int bpm, float gsrFiltered, float gsrBaseline) {
+        if (bpm <= 0) {
+            return 0f;
+        }
+
+        float bpmScore;
+        if (bpm <= 50) {
+            bpmScore = 100f;
+        } else if (bpm < 70) {
+            bpmScore = (70f - bpm) * 5f;
+        } else {
+            bpmScore = 0f;
+        }
+
+        float gsrScore = 0f;
+        if (gsrBaseline > 0.01f) {
+            float gsrRatio = gsrFiltered / gsrBaseline;
+            if (gsrRatio <= 0.7f) {
+                gsrScore = 100f;
+            } else if (gsrRatio < 1.0f) {
+                gsrScore = (1.0f - gsrRatio) * 100f / 0.3f;
+            }
+        }
+
+        float score = 0.6f * bpmScore + 0.4f * gsrScore;
+        return Math.max(0f, Math.min(100f, score));
+    }
+
+    private static FatigueSnapshot waitingSnapshot() {
+        return new FatigueSnapshot(
+                0,
+                "Waiting",
+                "•",
+                "Fatigue Risk: Waiting",
+                "Waiting for enough sensor data to estimate fatigue.",
+                Color.parseColor("#94A3B8")
+        );
+    }
 
     // =========================================================================
     @Override
@@ -156,29 +240,6 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
             }
             fatigueChartView.setLiveData(liveScores, liveTimestamps);
         }
-    }
-
-    // ── Fatigue score formula
-    private float computeFatigueScore(int bpm, float gsrFiltered, float gsrBaseline) {
-        if (bpm <= 0) return 0f;
-
-        // BPM component
-        float bpmScore;
-        if (bpm <= 50)      bpmScore = 100f;
-        else if (bpm < 70)  bpmScore = (70f - bpm) * 5f;
-        else                bpmScore = 0f;
-
-        // GSR component
-        float gsrScore = 0f;
-        if (gsrBaseline > 0.01f) {
-            float gsrRatio = gsrFiltered / gsrBaseline;
-            if (gsrRatio <= 0.7f)      gsrScore = 100f;
-            else if (gsrRatio < 1.0f)  gsrScore = (1.0f - gsrRatio) * 100f / 0.3f;
-            else                       gsrScore = 0f;
-        }
-
-        float score = 0.6f * bpmScore + 0.4f * gsrScore;
-        return Math.max(0f, Math.min(100f, score));
     }
 
     // ── Apply fatigue score to UI
@@ -310,5 +371,58 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
             timestamps.add(ts);
         }
         fatigueChartView.setHistoricalData(scores, timestamps);
+    }
+
+    public static final class FatigueSnapshot {
+        private final int score;
+        private final String label;
+        private final String emoji;
+        private final String dashboardTitle;
+        private final String dashboardDescription;
+        private final int accentColor;
+
+        private FatigueSnapshot(
+                int score,
+                String label,
+                String emoji,
+                String dashboardTitle,
+                String dashboardDescription,
+                int accentColor
+        ) {
+            this.score = score;
+            this.label = label;
+            this.emoji = emoji;
+            this.dashboardTitle = dashboardTitle;
+            this.dashboardDescription = dashboardDescription;
+            this.accentColor = accentColor;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public String getEmoji() {
+            return emoji;
+        }
+
+        public String getScoreText() {
+            return score + "/100";
+        }
+
+        public String getDashboardTitle() {
+            return dashboardTitle;
+        }
+
+        public String getDashboardDescription() {
+            return dashboardDescription;
+        }
+
+        public int getAccentColor() {
+            return accentColor;
+        }
     }
 }

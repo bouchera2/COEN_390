@@ -1,0 +1,5 @@
+<resources>
+    <style name="TextAppearance.COEN390.ToolbarTitle" parent="@style/TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

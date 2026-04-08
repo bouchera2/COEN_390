@@ -25,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     // ── Nav ──────────────────────────────────────────────────────────────────
     private View navDashboardItem;
+    private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
 
@@ -84,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
     // ────────────────────────────────────────────────────────────────────────
     private void bindViews() {
         navDashboardItem = findViewById(R.id.navDashboardItem);
+        navAlertsItem    = findViewById(R.id.navAlertsItem);
         navLogItem       = findViewById(R.id.navLogItem);
         navSettingsItem  = findViewById(R.id.navSettingsItem);
 
@@ -113,13 +115,17 @@ public class SettingsActivity extends AppCompatActivity {
     //  Navigation
     private void bindNavigation() {
         navDashboardItem.setOnClickListener(v -> {
-            startActivity(new Intent(this, GpsNavigationActivity.class));
+            startActivity(NavigationIntentFactory.createGpsIntent(this));
             finish();
         });
         navLogItem.setOnClickListener(v -> {
             startActivity(new Intent(this, DriverLogActivity.class));
             finish();
         });
+        if (navAlertsItem != null) {
+            navAlertsItem.setOnClickListener(v ->
+                    startActivity(new Intent(this, AlertsActivity.class)));
+        }
         navSettingsItem.setOnClickListener(v -> { /* already here */ });
         btnEditPersonalInfo.setOnClickListener(v -> {
             Intent intent = new Intent(this, DriverProfileSetupActivity.class);

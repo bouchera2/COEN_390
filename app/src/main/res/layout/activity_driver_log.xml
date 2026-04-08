@@ -17,6 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="#101622"
             app:title="Driver Log"
+            app:titleTextAppearance="@style/TextAppearance.COEN390.ToolbarTitle"
             app:titleTextColor="#F8FAFC">
 
             <TextView
@@ -495,15 +496,15 @@
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:contentDescription="Dashboard"
-                android:src="@drawable/ic_house"
+                android:contentDescription="GPS"
+                android:src="@android:drawable/ic_menu_mylocation"
                 app:tint="#64748B" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Dashboard"
+                android:text="GPS"
                 android:textAllCaps="true"
                 android:textColor="#64748B"
                 android:textSize="10sp"

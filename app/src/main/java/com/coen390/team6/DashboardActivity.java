@@ -1,9 +1,12 @@
 package com.coen390.team6;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +19,8 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -30,6 +35,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class DashboardActivity extends AppCompatActivity {
+    private static final int FATIGUE_ALERT_THRESHOLD = 85;
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 3902;
 
     private TextView heartRateText, fatigueText, bluetoothText, batteryText;
     private TextView fatigueLabelText;
@@ -43,9 +50,13 @@ public class DashboardActivity extends AppCompatActivity {
     private ImageView routeSnapshotImage;
     private View[] heartRateBars;
     private View batteryChip;
+    private View bluetoothStatusChip;
+    private View bluetoothStatusDot;
     private View navDashboardItem;
+    private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
+    private boolean fatigueAlertShown;
     private final Handler sensorRefreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable sensorRefreshRunnable = new Runnable() {
         @Override
@@ -66,6 +77,8 @@ public class DashboardActivity extends AppCompatActivity {
         bindData();
         bindNavigation();
         syncDriverThresholds();
+        ensureNotificationPermission();
+        FatigueAlertNotifier.ensureChannel(this);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -89,7 +102,10 @@ public class DashboardActivity extends AppCompatActivity {
         routeSnapshotImage = findViewById(R.id.routeSnapshotImage);
         dashboardToolbar = findViewById(R.id.dashboardToolbar);
         batteryChip = findViewById(R.id.batteryChip);
+        bluetoothStatusChip = findViewById(R.id.bluetoothStatusChip);
+        bluetoothStatusDot = findViewById(R.id.bluetoothStatusDot);
         navDashboardItem = findViewById(R.id.navDashboardItem);
+        navAlertsItem = findViewById(R.id.navAlertsItem);
         navLogItem = findViewById(R.id.navLogItem);
         navSettingsItem = findViewById(R.id.navSettingsItem);
         heartRateBars = new View[]{
@@ -122,7 +138,7 @@ public class DashboardActivity extends AppCompatActivity {
     private void bindNavigation() {
         if (navDashboardItem != null) {
             navDashboardItem.setOnClickListener(v -> {
-                startActivity(new Intent(this, GpsNavigationActivity.class));
+                startActivity(NavigationIntentFactory.createGpsIntent(this));
                 finish();
             });
         }
@@ -135,6 +151,11 @@ public class DashboardActivity extends AppCompatActivity {
             });
         }
 
+        if (navAlertsItem != null) {
+            navAlertsItem.setOnClickListener(v ->
+                    startActivity(new Intent(this, AlertsActivity.class)));
+        }
+
         if (navSettingsItem != null) {
             navSettingsItem.setOnClickListener(v -> {
                 Intent intent = new Intent(DashboardActivity.this, SettingsActivity.class);
@@ -145,10 +166,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         View activeRouteCard = findViewById(R.id.activeRouteCard);
         if (activeRouteCard != null) {
-            activeRouteCard.setOnClickListener(v -> {
-                Intent intent = new Intent(DashboardActivity.this, GpsNavigationActivity.class);
-                startActivity(intent);
-            });
+            activeRouteCard.setOnClickListener(v ->
+                    startActivity(NavigationIntentFactory.createGpsIntent(this)));
         }
 
         View detailedAnalysisButton = findViewById(R.id.btnDetailedAnalysis);
@@ -162,7 +181,8 @@ public class DashboardActivity extends AppCompatActivity {
         boolean isConnected = BleSensorPreferences.isConnected(this);
         int avgBpm = BleSensorPreferences.getAvgBpm(this);
         float bpm = BleSensorPreferences.getBpm(this);
-        DriverFatigueStatus fatigueStatus = DriverFatigueStatus.from(this);
+        DetailedAnalysisActivity.FatigueSnapshot fatigueStatus =
+                DetailedAnalysisActivity.getFatigueSnapshot(this);
         boolean fingerDetected = BleSensorPreferences.isFingerDetected(this);
 
         if (heartRateText != null) {
@@ -170,15 +190,24 @@ public class DashboardActivity extends AppCompatActivity {
         }
         if (bluetoothText != null) {
             bluetoothText.setText(isConnected ? getString(R.string.connected) : getString(R.string.bt_status_disconnected));
+            bluetoothText.setTextColor(Color.parseColor(isConnected ? "#22C55E" : "#EF4444"));
+        }
+        if (bluetoothStatusChip != null) {
+            bluetoothStatusChip.setBackgroundColor(Color.parseColor(isConnected ? "#1A22C55E" : "#1AEF4444"));
+        }
+        if (bluetoothStatusDot != null) {
+            bluetoothStatusDot.setBackgroundResource(isConnected
+                    ? android.R.drawable.presence_online
+                    : android.R.drawable.presence_busy);
         }
         if (batteryChip != null) {
             batteryChip.setVisibility(isConnected ? View.VISIBLE : View.GONE);
         }
         if (batteryText != null) {
-            batteryText.setText(getString(R.string.battery_value_unavailable));
+            updateBatteryEstimate();
         }
         if (fatigueText != null) {
-            fatigueText.setText(fatigueStatus.getRiskPercent() + "%");
+            fatigueText.setText(fatigueStatus.getScore() + "%");
             fatigueText.setTextColor(Color.parseColor("#3B82F6"));
         }
         if (fatigueLabelText != null) {
@@ -194,11 +223,12 @@ public class DashboardActivity extends AppCompatActivity {
         }
         if (fatigueGauge != null) {
             fatigueGauge.setIndicatorColor(fatigueStatus.getAccentColor());
-            fatigueGauge.setProgress(fatigueStatus.getRiskPercent());
+            fatigueGauge.setProgress(fatigueStatus.getScore());
         }
 
         updateHeartRateBars(fingerDetected, avgBpm, bpm);
         updateDrivingTimeCard();
+        checkFatigueAndAlert(avgBpm > 0 ? avgBpm : Math.round(bpm), fatigueStatus.getScore());
     }
 
     private String formatHeartRate(boolean fingerDetected, int avgBpm, float bpm) {
@@ -275,6 +305,93 @@ public class DashboardActivity extends AppCompatActivity {
             int progress = (int) Math.min(100L, (totalMinutes * 100L) / 480L);
             drivingTimeProgress.setProgress(progress);
         }
+    }
+
+    private void updateBatteryEstimate() {
+        if (batteryText == null) {
+            return;
+        }
+
+        if (!DrivingSessionPreferences.isActive(this)) {
+            batteryText.setText(getString(R.string.battery_value_unavailable));
+            batteryText.setTextColor(Color.parseColor("#CBD5E1"));
+            return;
+        }
+
+        long driveMinutes = getDriveTimeMinutes();
+        batteryText.setText(BatteryEstimator.getBatteryBars(driveMinutes));
+        batteryText.setTextColor(Color.parseColor(BatteryEstimator.getBatteryColor(driveMinutes)));
+    }
+
+    private long getDriveTimeMinutes() {
+        if (!DrivingSessionPreferences.isActive(this)) {
+            return 0L;
+        }
+
+        long startedAtMs = DrivingSessionPreferences.getStartedAtMs(this);
+        long elapsedMs = Math.max(0L, System.currentTimeMillis() - startedAtMs);
+        return elapsedMs / 60000L;
+    }
+
+    private void checkFatigueAndAlert(int currentHr, int fatigueScore) {
+        if (fatigueScore < FATIGUE_ALERT_THRESHOLD) {
+            fatigueAlertShown = false;
+            return;
+        }
+
+        if (fatigueAlertShown) {
+            return;
+        }
+
+        fatigueAlertShown = true;
+        long driveMinutes = getDriveTimeMinutes();
+        long hours = driveMinutes / 60L;
+        long minutes = driveMinutes % 60L;
+        String driveTime = String.format(java.util.Locale.US, "%dh %02dm", hours, minutes);
+        long timestampMs = System.currentTimeMillis();
+        String alertMessage = "Critical fatigue detected. Immediate rest is recommended for driver safety.";
+
+        AlertHistoryPreferences.saveActiveAlert(
+                this,
+                "High Fatigue Risk",
+                alertMessage,
+                fatigueScore,
+                currentHr,
+                timestampMs
+        );
+
+        FatigueAlertNotifier.showFatigueAlert(
+                this,
+                currentHr,
+                "HIGH",
+                driveTime,
+                driveMinutes
+        );
+
+        Intent alertIntent = new Intent(this, FatigueAlertActivity.class);
+        alertIntent.putExtra("heartRate", currentHr);
+        alertIntent.putExtra("fatigueLevel", "HIGH");
+        alertIntent.putExtra("driveTime", driveTime);
+        alertIntent.putExtra("driveTimeMinutes", driveMinutes);
+        alertIntent.putExtra("fatigueScore", fatigueScore);
+        startActivity(alertIntent);
+    }
+
+    private void ensureNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                NOTIFICATION_PERMISSION_REQUEST_CODE
+        );
     }
 
     private void setBarHeight(View bar, int heightDp) {
