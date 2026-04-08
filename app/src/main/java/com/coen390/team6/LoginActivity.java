@@ -116,7 +116,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginWithEmail() {
-        String email = editTextEmail.getText().toString().trim();
+        if (!InputValidator.validateEmail(editTextEmail)) return;
+        if (!InputValidator.validatePassword(editTextPassword)) return;
+
+        String email = InputValidator.getSanitizedText(editTextEmail);
         String password = editTextPassword.getText().toString().trim();
 
         if (email.isEmpty()) { editTextEmail.setError("Email is required"); editTextEmail.requestFocus(); return; }
@@ -136,7 +139,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signUpWithEmail() {
-        String email = editTextEmail.getText().toString().trim();
+        if (!InputValidator.validateEmail(editTextEmail)) return;
+        if (!InputValidator.validatePassword(editTextPassword)) return;
+
+        String email = InputValidator.getSanitizedText(editTextEmail);
         String password = editTextPassword.getText().toString().trim();
 
         if (email.isEmpty()) { editTextEmail.setError("Email is required"); editTextEmail.requestFocus(); return; }

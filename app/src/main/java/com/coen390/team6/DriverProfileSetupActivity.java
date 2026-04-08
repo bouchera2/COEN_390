@@ -73,11 +73,22 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
     }
 
     private void saveProfile() {
+        // Validate all fields
+        if (!InputValidator.validateNotEmpty(etFullName, "Full Name")) return;
+        if (!InputValidator.validateNumber(etAge, "Age", 16, 80)) return;
+        if (!InputValidator.validateNumber(etWeight, "Weight", 30, 300)) return;
+        if (!InputValidator.validateNumber(etHeight, "Height", 100, 250)) return;
+        if (!InputValidator.validatePhone(etEmergencyContact)) return;
+
+        // Optional resting HR validation (if not empty)
+        String restingHRStr = etRestingHR.getText().toString().trim();
+        if (!restingHRStr.isEmpty()) {
+            if (!InputValidator.validateNumber(etRestingHR, "Resting HR", 40, 120)) return;
+        }
         String name = etFullName.getText().toString().trim();
         String ageStr = etAge.getText().toString().trim();
         String weightStr = etWeight.getText().toString().trim();
         String heightStr = etHeight.getText().toString().trim();
-        String restingHRStr = etRestingHR.getText().toString().trim();
         String emergencyPhone = etEmergencyContact.getText().toString().trim();
 
         // Validation
