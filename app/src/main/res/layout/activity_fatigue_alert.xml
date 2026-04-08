@@ -15,48 +15,11 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="⚠"
-            android:textColor="#F59E0B"
-            android:textSize="22sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:text="SAFETY PROTOCOL ACTIVE"
-            android:textAllCaps="true"
-            android:textColor="#F8FAFC"
-            android:textSize="11sp"
-            android:textStyle="bold" />
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="VEHICLE STATUS"
-                android:textAllCaps="true"
-                android:textColor="#94A3B8"
-                android:textSize="9sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvVehicleStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="LIVE MONITORING"
-                android:textColor="#22C55E"
-                android:textSize="11sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:orientation="vertical"/>
     </LinearLayout>
 
     <ScrollView
@@ -111,56 +74,10 @@
                 android:textColor="#94A3B8"
                 android:textSize="16sp" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="188dp"
-                android:layout_marginTop="28dp"
-                android:background="#111827">
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#172033" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#33000000"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="◎"
-                        android:textColor="#135BEC"
-                        android:textSize="44sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="REAL-TIME MONITOR"
-                        android:textAllCaps="true"
-                        android:textColor="#93C5FD"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="Visual confirmation of driver state"
-                        android:textColor="#F8FAFC"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </FrameLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="28dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -235,18 +152,6 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnCallDispatch"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="12dp"
-                android:backgroundTint="#E2E8F0"
-                android:text="Call Dispatch"
-                android:textAllCaps="false"
-                android:textColor="#0F172A"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <Button
                 android:id="@+id/btnDismissAlert"
                 android:layout_width="wrap_content"
                 android:layout_height="52dp"
@@ -257,103 +162,6 @@
                 android:textColor="#94A3B8"
                 android:textSize="15sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="DRIVE TIME"
-                        android:textAllCaps="true"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvAlertDriveTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="4h 12m"
-                        android:textColor="#F8FAFC"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="36dp"
-                    android:background="#1E293B" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ALERTS TODAY"
-                        android:textAllCaps="true"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvAlertCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="1"
-                        android:textColor="#F59E0B"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="36dp"
-                    android:background="#1E293B" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="DISTANCE"
-                        android:textAllCaps="true"
-                        android:textColor="#64748B"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvAlertDistance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="248 mi"
-                        android:textColor="#F8FAFC"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

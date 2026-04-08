@@ -158,6 +158,17 @@ public class SettingsActivity extends AppCompatActivity {
                 baselineReady
         );
         BleSensorPreferences.setDriverState(this, currentState);
+        int fatigueScore = Math.round(DetailedAnalysisActivity.computeFatigueScore(
+                displayBpm,
+                gsrFiltered,
+                gsrBaseline
+        ));
+        DriverAlertManager.evaluateAndNotify(
+                this,
+                displayBpm,
+                fatigueScore,
+                currentState
+        );
     }
 
     private void refreshThresholdSummary() {

@@ -312,6 +312,17 @@ public class MainActivity extends AppCompatActivity {
                 // 4. Save to SharedPrefs + Firestore
                 BleSensorPreferences.saveSensorData(MainActivity.this, sensorData);
                 firestoreRepository.saveSensorReading(sensorData);
+                int fatigueScore = Math.round(DetailedAnalysisActivity.computeFatigueScore(
+                        sensorData.getAvgBpm() > 0 ? sensorData.getAvgBpm() : Math.round(sensorData.getBpm()),
+                        sensorData.getGsrFiltered(),
+                        sensorData.getGsrBaseline()
+                ));
+                DriverAlertManager.evaluateAndNotify(
+                        MainActivity.this,
+                        sensorData.getAvgBpm() > 0 ? sensorData.getAvgBpm() : Math.round(sensorData.getBpm()),
+                        fatigueScore,
+                        appState
+                );
 
                 Log.d(TAG, "Value received: " + value + " → state=" + appState);
             }

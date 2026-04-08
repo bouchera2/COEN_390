@@ -86,8 +86,9 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
                 gsrBaseline,
                 gsrBaseline > 0.01f
         );
+        int score = Math.round(computeFatigueScore(displayBpm, gsrFiltered, gsrBaseline));
         BleSensorPreferences.setDriverState(context, state);
-        return snapshotForDriverState(state);
+        return snapshotForDriverState(state, score);
     }
 
     public static float computeFatigueScore(int bpm, float gsrFiltered, float gsrBaseline) {
@@ -129,7 +130,7 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         );
     }
 
-    private static FatigueSnapshot snapshotForDriverState(String state) {
+    private static FatigueSnapshot snapshotForDriverState(String state, int score) {
         if (state == null) {
             return waitingSnapshot();
         }
@@ -137,7 +138,7 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         switch (state) {
             case "DROWSY":
                 return new FatigueSnapshot(
-                        92,
+                        score,
                         "Drowsy",
                         "☹",
                         "Fatigue Risk: High",
@@ -146,7 +147,7 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
                 );
             case "STRESSED":
                 return new FatigueSnapshot(
-                        72,
+                        score,
                         "Stressed",
                         "⚠",
                         "Stress Risk: Elevated",
@@ -155,7 +156,7 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
                 );
             case "NORMAL":
                 return new FatigueSnapshot(
-                        18,
+                        score,
                         "Normal",
                         "🙂",
                         "Fatigue Risk: Low",
@@ -279,13 +280,13 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         String label;
         if (score < 30) {
             color = Color.parseColor("#22C55E"); // green
-            label = "Normal";
+            label = "Relaxed";
         } else if (score < 60) {
             color = Color.parseColor("#F97316"); // orange
-            label = "Fatigued";
+            label = "Normal";
         } else {
             color = Color.parseColor("#EF4444"); // red
-            label = "Drowsy";
+            label = "Fatigued";
         }
         tvFatigueScore.setTextColor(color);
         tvFatigueLabel.setText(label);

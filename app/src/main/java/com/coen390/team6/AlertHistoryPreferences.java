@@ -27,7 +27,8 @@ public final class AlertHistoryPreferences {
             String message,
             int score,
             int heartRate,
-            long timestampMs
+            long timestampMs,
+            String fatigueLevel
     ) {
         JSONObject json = new JSONObject();
         try {
@@ -36,6 +37,7 @@ public final class AlertHistoryPreferences {
             json.put("score", score);
             json.put("heartRate", heartRate);
             json.put("timestampMs", timestampMs);
+            json.put("fatigueLevel", fatigueLevel);
         } catch (JSONException ignored) {
         }
 
