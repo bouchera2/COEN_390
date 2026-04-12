@@ -121,7 +121,7 @@ public class AlertsActivity extends AppCompatActivity {
         TextView messageText = itemView.findViewById(R.id.messageText);
 
         titleText.setText(alert.optString("title", "Fatigue Alert"));
-        subtitleText.setText(formatTimestamp(alert.optLong("timestampMs", System.currentTimeMillis())));
+        subtitleText.setText(formatAlertSubtitle(alert, isActive));
 
         if (isActive) {
             statusChip.setText("Active");
@@ -160,6 +160,24 @@ public class AlertsActivity extends AppCompatActivity {
     }
 
     private String formatTimestamp(long timestampMs) {
-        return new SimpleDateFormat("MMM d, HH:mm", Locale.US).format(new Date(timestampMs));
+        return new SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.US).format(new Date(timestampMs));
+    }
+
+    private String formatAlertSubtitle(JSONObject alert, boolean isActive) {
+        long triggeredAtMs = alert.optLong("timestampMs", 0L);
+        if (triggeredAtMs <= 0L) {
+            return isActive ? "ACTIVE ALERT" : "ALERT HISTORY";
+        }
+
+        String triggeredText = "Triggered " + formatTimestamp(triggeredAtMs);
+        if (isActive) {
+            return triggeredText;
+        }
+
+        long resolvedAtMs = alert.optLong("resolvedAtMs", 0L);
+        if (resolvedAtMs > 0L) {
+            return triggeredText + "  •  Resolved " + formatTimestamp(resolvedAtMs);
+        }
+        return triggeredText;
     }
 }

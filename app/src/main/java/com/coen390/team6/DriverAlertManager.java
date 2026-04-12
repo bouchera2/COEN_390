@@ -1,12 +1,13 @@
 package com.coen390.team6;
 
 import android.content.Context;
+import android.content.Intent;
 
 import org.json.JSONObject;
 
 public final class DriverAlertManager {
 
-    private static final int FATIGUE_ALERT_THRESHOLD = 85;
+    private static final long CONNECTION_GRACE_PERIOD_MS = 60000L;
     private static final long ALERT_COOLDOWN_MS = 15000L;
 
     private DriverAlertManager() {
@@ -16,8 +17,13 @@ public final class DriverAlertManager {
                                          int heartRate,
                                          int fatigueScore,
                                          String driverState) {
-        String alertLevel = resolveAlertLevel(fatigueScore, driverState);
+        String alertLevel = resolveAlertLevel(fatigueScore);
         JSONObject activeAlert = AlertHistoryPreferences.getActiveAlert(context);
+        String suppressedAlertLevel = AlertHistoryPreferences.getSuppressedAlertLevel(context);
+
+        if (isWithinConnectionGracePeriod(context)) {
+            return;
+        }
 
         if (alertLevel == null) {
             if (activeAlert != null) {
@@ -28,6 +34,11 @@ public final class DriverAlertManager {
                 );
                 FatigueAlertNotifier.cancel(context);
             }
+            AlertHistoryPreferences.clearSuppressedAlertLevel(context);
+            return;
+        }
+
+        if (alertLevel.equals(suppressedAlertLevel)) {
             return;
         }
 
@@ -53,16 +64,8 @@ public final class DriverAlertManager {
             );
         }
 
-        String alertTitle = "High Fatigue Risk";
-        String alertMessage = "Critical fatigue detected. Immediate rest is recommended for driver safety.";
-
-        if ("DROWSY".equals(alertLevel)) {
-            alertTitle = "Driver Drowsiness Detected";
-            alertMessage = "Drowsy state detected from the live thresholds. Immediate rest is recommended.";
-        } else if ("STRESSED".equals(alertLevel)) {
-            alertTitle = "Driver Stress Detected";
-            alertMessage = "Stressed state detected from the live thresholds. Check the driver condition.";
-        }
+        String alertTitle = "Driver Fatigue Detected";
+        String alertMessage = "Fatigue indicators are elevated. Immediate rest is recommended for driver safety.";
 
         AlertHistoryPreferences.saveActiveAlert(
                 context,
@@ -81,19 +84,33 @@ public final class DriverAlertManager {
                 driveTime,
                 driveMinutes
         );
+
+        Intent alertIntent = new Intent(context, FatigueAlertActivity.class)
+                .putExtra("heartRate", heartRate)
+                .putExtra("fatigueLevel", alertLevel)
+                .putExtra("driveTime", driveTime)
+                .putExtra("driveTimeMinutes", driveMinutes)
+                .putExtra("fatigueScore", fatigueScore)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        context.startActivity(alertIntent);
     }
 
-    private static String resolveAlertLevel(int fatigueScore, String driverState) {
-        if ("DROWSY".equals(driverState)) {
-            return "DROWSY";
-        }
-        if ("STRESSED".equals(driverState)) {
-            return "STRESSED";
-        }
-        if (fatigueScore >= FATIGUE_ALERT_THRESHOLD) {
-            return "HIGH";
+    private static String resolveAlertLevel(int fatigueScore) {
+        String scoreState = DetailedAnalysisActivity.getScoreState(fatigueScore);
+        if ("FATIGUED".equals(scoreState)) {
+            return "FATIGUED";
         }
         return null;
+    }
+
+    private static boolean isWithinConnectionGracePeriod(Context context) {
+        long connectedSinceMs = BleSensorPreferences.getConnectedSinceMs(context);
+        if (connectedSinceMs <= 0L) {
+            return false;
+        }
+        return (System.currentTimeMillis() - connectedSinceMs) < CONNECTION_GRACE_PERIOD_MS;
     }
 
     private static long getDriveTimeMinutes(Context context) {

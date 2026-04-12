@@ -12,6 +12,7 @@ public final class AlertHistoryPreferences {
     private static final String PREFS_NAME = "alert_history_prefs";
     private static final String KEY_ACTIVE_ALERT = "active_alert";
     private static final String KEY_HISTORY_ALERTS = "history_alerts";
+    private static final String KEY_SUPPRESSED_ALERT_LEVEL = "suppressed_alert_level";
     private static final int MAX_HISTORY_ITEMS = 20;
 
     private AlertHistoryPreferences() {
@@ -86,6 +87,24 @@ public final class AlertHistoryPreferences {
                 .putString(KEY_HISTORY_ALERTS, updated.toString())
                 .remove(KEY_ACTIVE_ALERT)
                 .apply();
+    }
+
+    public static void setSuppressedAlertLevel(Context context, String fatigueLevel) {
+        if (fatigueLevel == null || fatigueLevel.isEmpty()) {
+            clearSuppressedAlertLevel(context);
+            return;
+        }
+        getPrefs(context).edit()
+                .putString(KEY_SUPPRESSED_ALERT_LEVEL, fatigueLevel)
+                .apply();
+    }
+
+    public static String getSuppressedAlertLevel(Context context) {
+        return getPrefs(context).getString(KEY_SUPPRESSED_ALERT_LEVEL, null);
+    }
+
+    public static void clearSuppressedAlertLevel(Context context) {
+        getPrefs(context).edit().remove(KEY_SUPPRESSED_ALERT_LEVEL).apply();
     }
 
     public static JSONArray getHistoryAlerts(Context context) {

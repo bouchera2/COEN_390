@@ -28,8 +28,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.UUID;
@@ -108,17 +106,6 @@ public class MainActivity extends AppCompatActivity {
         Button btnDashboard = findViewById(R.id.btn_dashboard);
         btnDashboard.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, GpsNavigationActivity.class)));
-
-        // Disconnect button → sign out and go to Login
-        Button btnDisconnect = findViewById(R.id.btn_disconnect);
-        btnDisconnect.setOnClickListener(v -> {
-            shouldReconnect = false;
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
 
         btnScanConnect = findViewById(R.id.btnScan);
         btnRefresh = findViewById(R.id.btnRefresh);
@@ -296,20 +283,10 @@ public class MainActivity extends AppCompatActivity {
                 // 1. Parse raw Arduino packet
                 BleSensorData raw = BleSensorData.fromPayload(value);
 
-                // 2. Reclassify driverState with app-side thresholds
-                boolean baselineReady = raw.getGsrBaseline() > 0.01f;
-                String appState = ThresholdPreferences.classifyDriverState(
-                        MainActivity.this,
-                        raw.getAvgBpm(),
-                        raw.getGsrFiltered(),
-                        raw.getGsrBaseline(),
-                        baselineReady
-                );
+                // 2. Use the device-reported driverState directly
+                BleSensorData sensorData = raw;
 
-                // 3. Override driverState with app classification
-                BleSensorData sensorData = raw.withDriverState(appState);
-
-                // 4. Save to SharedPrefs + Firestore
+                // 3. Save to SharedPrefs + Firestore
                 BleSensorPreferences.saveSensorData(MainActivity.this, sensorData);
                 firestoreRepository.saveSensorReading(sensorData);
                 int fatigueScore = Math.round(DetailedAnalysisActivity.computeFatigueScore(
@@ -321,10 +298,10 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.this,
                         sensorData.getAvgBpm() > 0 ? sensorData.getAvgBpm() : Math.round(sensorData.getBpm()),
                         fatigueScore,
-                        appState
+                        sensorData.getDriverState()
                 );
 
-                Log.d(TAG, "Value received: " + value + " → state=" + appState);
+                Log.d(TAG, "Value received: " + value + " → state=" + sensorData.getDriverState());
             }
         });
     }

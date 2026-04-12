@@ -52,7 +52,7 @@ public class FatigueAlertActivity extends AppCompatActivity {
             tvAlertHR.setText(heartRate + " BPM");
         }
         if (fatigueLevel != null) {
-            tvAlertFatigue.setText(fatigueLevel);
+            tvAlertFatigue.setText(formatFatigueLevel(fatigueLevel));
         }
 
         startLoudAlarm();
@@ -64,6 +64,7 @@ public class FatigueAlertActivity extends AppCompatActivity {
         btnFindRestStop.setOnClickListener(v -> {
             stopAlarm();
             FatigueAlertNotifier.cancel(this);
+            AlertHistoryPreferences.setSuppressedAlertLevel(this, fatigueLevel);
             AlertHistoryPreferences.archiveActiveAlert(
                     this,
                     "Resolved",
@@ -78,6 +79,7 @@ public class FatigueAlertActivity extends AppCompatActivity {
         btnDismiss.setOnClickListener(v -> {
             stopAlarm();
             FatigueAlertNotifier.cancel(this);
+            AlertHistoryPreferences.setSuppressedAlertLevel(this, fatigueLevel);
             AlertHistoryPreferences.archiveActiveAlert(
                     this,
                     "Dismissed",
@@ -138,6 +140,13 @@ public class FatigueAlertActivity extends AppCompatActivity {
         if (vibrator != null) {
             vibrator.cancel();
         }
+    }
+
+    private static String formatFatigueLevel(String fatigueLevel) {
+        if ("FATIGUED".equals(fatigueLevel)) {
+            return "Fatigued";
+        }
+        return fatigueLevel;
     }
 
     @Override

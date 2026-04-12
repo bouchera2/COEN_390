@@ -79,16 +79,8 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
             return waitingSnapshot();
         }
 
-        String state = ThresholdPreferences.classifyDriverState(
-                context,
-                displayBpm,
-                gsrFiltered,
-                gsrBaseline,
-                gsrBaseline > 0.01f
-        );
         int score = Math.round(computeFatigueScore(displayBpm, gsrFiltered, gsrBaseline));
-        BleSensorPreferences.setDriverState(context, state);
-        return snapshotForDriverState(state, score);
+        return snapshotForScore(score);
     }
 
     public static float computeFatigueScore(int bpm, float gsrFiltered, float gsrBaseline) {
@@ -130,37 +122,51 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         );
     }
 
+    public static String getScoreState(int score) {
+        if (score < 30) {
+            return "RELAXED";
+        }
+        if (score < 60) {
+            return "NORMAL";
+        }
+        return "FATIGUED";
+    }
+
+    private static FatigueSnapshot snapshotForScore(int score) {
+        return snapshotForDriverState(getScoreState(score), score);
+    }
+
     private static FatigueSnapshot snapshotForDriverState(String state, int score) {
         if (state == null) {
             return waitingSnapshot();
         }
 
         switch (state) {
-            case "DROWSY":
+            case "FATIGUED":
                 return new FatigueSnapshot(
                         score,
-                        "Drowsy",
+                        "Fatigued",
                         "☹",
                         "Fatigue Risk: High",
-                        "Low heart rate and GSR detected. Stop and rest.",
+                        "Fatigue indicators are elevated. Stop and rest soon.",
                         Color.parseColor("#EF4444")
-                );
-            case "STRESSED":
-                return new FatigueSnapshot(
-                        score,
-                        "Stressed",
-                        "⚠",
-                        "Stress Risk: Elevated",
-                        "Elevated heart rate and GSR detected. Check the driver condition.",
-                        Color.parseColor("#F97316")
                 );
             case "NORMAL":
                 return new FatigueSnapshot(
                         score,
                         "Normal",
+                        "😐",
+                        "Fatigue Risk: Moderate",
+                        "Fatigue signs are present but still within a manageable range.",
+                        Color.parseColor("#F97316")
+                );
+            case "RELAXED":
+                return new FatigueSnapshot(
+                        score,
+                        "Relaxed",
                         "🙂",
                         "Fatigue Risk: Low",
-                        "Driver metrics are within a normal range.",
+                        "Driver metrics are within a relaxed range.",
                         Color.parseColor("#22C55E")
                 );
             case "CALIBRATING":
@@ -235,7 +241,6 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         boolean crash      = BleSensorPreferences.isPossibleCrash(this);
         float   gsrF       = BleSensorPreferences.getGsrFiltered(this);
         float   gsrB       = BleSensorPreferences.getGsrBaseline(this);
-        String  state      = BleSensorPreferences.getDriverState(this);
 
         int displayBpm = avgBpm > 0 ? avgBpm : Math.round(bpm);
 
@@ -251,11 +256,10 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         tvLiveCrash.setText(crash ? "⚠ INCIDENT DETECTED" : "No incident");
         tvLiveCrash.setTextColor(crash ? Color.parseColor("#EF4444") : Color.parseColor("#22C55E"));
 
-        // ── Driver State
-        applyDriverState(state);
-
         // ── Fatigue Score
         float score = computeFatigueScore(displayBpm, gsrF, gsrB);
+        String scoreState = getScoreState(Math.round(score));
+        applyDriverState(scoreState);
         applyFatigueScore(score);
 
         // ── Add to live chart history
@@ -272,27 +276,14 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
 
     // ── Apply fatigue score to UI
     private void applyFatigueScore(float score) {
-        int scoreInt = Math.round(score);
-        tvFatigueScore.setText(String.valueOf(scoreInt));
-        progressFatigue.setProgress(scoreInt);
-
-        int color;
-        String label;
-        if (score < 30) {
-            color = Color.parseColor("#22C55E"); // green
-            label = "Relaxed";
-        } else if (score < 60) {
-            color = Color.parseColor("#F97316"); // orange
-            label = "Normal";
-        } else {
-            color = Color.parseColor("#EF4444"); // red
-            label = "Fatigued";
-        }
-        tvFatigueScore.setTextColor(color);
-        tvFatigueLabel.setText(label);
-        tvFatigueLabel.setTextColor(color);
+        FatigueSnapshot snapshot = snapshotForScore(Math.round(score));
+        tvFatigueScore.setText(String.valueOf(snapshot.getScore()));
+        progressFatigue.setProgress(snapshot.getScore());
+        tvFatigueScore.setTextColor(snapshot.getAccentColor());
+        tvFatigueLabel.setText(snapshot.getLabel());
+        tvFatigueLabel.setTextColor(snapshot.getAccentColor());
         progressFatigue.getProgressDrawable().setColorFilter(
-                color, android.graphics.PorterDuff.Mode.SRC_IN);
+                snapshot.getAccentColor(), android.graphics.PorterDuff.Mode.SRC_IN);
     }
 
     // ── Apply driver state to UI
@@ -302,17 +293,17 @@ public class DetailedAnalysisActivity extends AppCompatActivity {
         String desc;
         int color;
         switch (state) {
-            case "DROWSY":
+            case "FATIGUED":
                 color = Color.parseColor("#EF4444");
-                desc  = "Low heart rate & low GSR — driver may be falling asleep";
-                break;
-            case "STRESSED":
-                color = Color.parseColor("#F97316");
-                desc  = "Elevated heart rate & GSR — driver under stress";
+                desc  = "High fatigue score detected from heart rate and GSR trends";
                 break;
             case "NORMAL":
+                color = Color.parseColor("#F97316");
+                desc  = "Moderate fatigue score detected from the live readings";
+                break;
+            case "RELAXED":
                 color = Color.parseColor("#22C55E");
-                desc  = "Heart rate and GSR within normal range";
+                desc  = "Low fatigue score with readings in a relaxed range";
                 break;
             case "CALIBRATING":
                 color = Color.parseColor("#94A3B8");

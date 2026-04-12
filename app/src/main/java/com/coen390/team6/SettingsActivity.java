@@ -1,7 +1,6 @@
 package com.coen390.team6;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -29,15 +28,6 @@ public class SettingsActivity extends AppCompatActivity {
     private View navLogItem;
     private View navSettingsItem;
 
-    // ── Threshold UI ─────────────────────────────────────────────────────────
-    private Button btnDemoDrowsy;
-    private Button btnDemoNormal;
-    private Button btnDemoStressed;
-    private TextView tvBpmDrowsyVal;
-    private TextView tvBpmStressedVal;
-    private TextView tvGsrDrowsyVal;
-    private TextView tvGsrStressedVal;
-
     private TextView tvDriverName;
     private TextView tvDriverEmail;
     private TextView tvDeviceStatus;
@@ -55,7 +45,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         bindViews();
         bindNavigation();
-        bindThresholdControls();
         bindLogout();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -72,13 +61,6 @@ public class SettingsActivity extends AppCompatActivity {
         navLogItem       = findViewById(R.id.navLogItem);
         navSettingsItem  = findViewById(R.id.navSettingsItem);
 
-        btnDemoDrowsy    = findViewById(R.id.btnDemoDrowsy);
-        btnDemoNormal    = findViewById(R.id.btnDemoNormal);
-        btnDemoStressed  = findViewById(R.id.btnDemoStressed);
-        tvBpmDrowsyVal   = findViewById(R.id.tvBpmDrowsyVal);
-        tvBpmStressedVal = findViewById(R.id.tvBpmStressedVal);
-        tvGsrDrowsyVal   = findViewById(R.id.tvGsrDrowsyVal);
-        tvGsrStressedVal = findViewById(R.id.tvGsrStressedVal);
         btnEditPersonalInfo = findViewById(R.id.btnEditPersonalInfo);
         btnOpenBlePage = findViewById(R.id.btnOpenBlePage);
         tvDriverName = findViewById(R.id.tvDriverName);
@@ -92,8 +74,6 @@ public class SettingsActivity extends AppCompatActivity {
         super.onResume();
         populateAccountSummary();
         updateConnectionSummary();
-        refreshThresholdSummary();
-        updateDemoButtonState();
     }
 
     //  Navigation
@@ -118,86 +98,6 @@ public class SettingsActivity extends AppCompatActivity {
         });
         btnOpenBlePage.setOnClickListener(v ->
                 startActivity(new Intent(this, MainActivity.class)));
-    }
-
-    // ── Thresholds
-    private void bindThresholdControls() {
-        btnDemoDrowsy.setOnClickListener(v -> applyDemoMode(ThresholdPreferences.DEMO_MODE_DROWSY));
-        btnDemoNormal.setOnClickListener(v -> applyDemoMode(ThresholdPreferences.DEMO_MODE_NORMAL));
-        btnDemoStressed.setOnClickListener(v -> applyDemoMode(ThresholdPreferences.DEMO_MODE_STRESSED));
-
-        refreshThresholdSummary();
-        updateDemoButtonState();
-    }
-
-    private void applyDemoMode(String demoMode) {
-        int avgBpm = BleSensorPreferences.getAvgBpm(this);
-        float bpm = BleSensorPreferences.getBpm(this);
-        float gsrFiltered = BleSensorPreferences.getGsrFiltered(this);
-        float gsrBaseline = BleSensorPreferences.getGsrBaseline(this);
-        int displayBpm = avgBpm > 0 ? avgBpm : Math.round(bpm);
-
-        if (ThresholdPreferences.DEMO_MODE_NORMAL.equals(demoMode)) {
-            ThresholdPreferences.resetToDefaults(this);
-        } else {
-            ThresholdPreferences.applyDemoMode(demoMode, displayBpm, gsrFiltered, gsrBaseline);
-        }
-
-        republishCurrentDriverState(displayBpm, gsrFiltered, gsrBaseline);
-        refreshThresholdSummary();
-        updateDemoButtonState();
-    }
-
-    private void republishCurrentDriverState(int displayBpm, float gsrFiltered, float gsrBaseline) {
-        boolean baselineReady = gsrBaseline > 0.01f;
-        String currentState = ThresholdPreferences.classifyDriverState(
-                this,
-                displayBpm,
-                gsrFiltered,
-                gsrBaseline,
-                baselineReady
-        );
-        BleSensorPreferences.setDriverState(this, currentState);
-        int fatigueScore = Math.round(DetailedAnalysisActivity.computeFatigueScore(
-                displayBpm,
-                gsrFiltered,
-                gsrBaseline
-        ));
-        DriverAlertManager.evaluateAndNotify(
-                this,
-                displayBpm,
-                fatigueScore,
-                currentState
-        );
-    }
-
-    private void refreshThresholdSummary() {
-        tvBpmDrowsyVal.setText("< " + ThresholdPreferences.getBpmDrowsyMax(this) + " BPM");
-        tvBpmStressedVal.setText("> " + ThresholdPreferences.getBpmStressedMin(this) + " BPM");
-        tvGsrDrowsyVal.setText(String.format(Locale.getDefault(), "< %.2f",
-                ThresholdPreferences.getGsrDrowsyMax(this)));
-        tvGsrStressedVal.setText(String.format(Locale.getDefault(), "> %.2f",
-                ThresholdPreferences.getGsrStressedMin(this)));
-    }
-
-    private void updateDemoButtonState() {
-        String activeMode = ThresholdPreferences.getActiveDemoMode();
-        styleDemoButton(btnDemoDrowsy,
-                ThresholdPreferences.DEMO_MODE_DROWSY.equals(activeMode),
-                0xFFEF4444);
-        styleDemoButton(btnDemoNormal,
-                ThresholdPreferences.DEMO_MODE_NORMAL.equals(activeMode),
-                0xFF22C55E);
-        styleDemoButton(btnDemoStressed,
-                ThresholdPreferences.DEMO_MODE_STRESSED.equals(activeMode),
-                0xFFF97316);
-    }
-
-    private void styleDemoButton(Button button, boolean active, int activeColor) {
-        int backgroundColor = active ? activeColor : 0xFF101622;
-        int textColor = active ? 0xFFF8FAFC : 0xFFCBD5E1;
-        button.setBackgroundTintList(ColorStateList.valueOf(backgroundColor));
-        button.setTextColor(textColor);
     }
 
     private void populateAccountSummary() {

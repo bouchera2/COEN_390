@@ -218,12 +218,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         updateHeartRateBars(fingerDetected, avgBpm, bpm);
         updateDrivingTimeCard();
-        DriverAlertManager.evaluateAndNotify(
-                this,
-                avgBpm > 0 ? avgBpm : Math.round(bpm),
-                fatigueStatus.getScore(),
-                driverState
-        );
     }
 
     private String formatHeartRate(boolean fingerDetected, int avgBpm, float bpm) {

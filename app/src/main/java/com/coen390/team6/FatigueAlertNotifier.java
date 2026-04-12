@@ -106,21 +106,15 @@ public final class FatigueAlertNotifier {
     }
 
     private static String getAlertTitle(String fatigueLevel) {
-        if ("STRESSED".equals(fatigueLevel)) {
-            return "Stress detected";
-        }
-        if ("DROWSY".equals(fatigueLevel)) {
-            return "Drowsiness detected";
+        if ("FATIGUED".equals(fatigueLevel)) {
+            return "Fatigue detected";
         }
         return "Fatigue detected";
     }
 
     private static String getAlertMessage(String fatigueLevel) {
-        if ("STRESSED".equals(fatigueLevel)) {
-            return "Elevated stress detected. Review the driver alert now.";
-        }
-        if ("DROWSY".equals(fatigueLevel)) {
-            return "Critical drowsiness detected. Review the driver alert immediately.";
+        if ("FATIGUED".equals(fatigueLevel)) {
+            return "Critical fatigue detected. Review the driver alert immediately.";
         }
         return "Critical fatigue detected. Open the alert now.";
     }
