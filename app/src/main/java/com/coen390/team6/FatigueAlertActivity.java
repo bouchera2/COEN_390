@@ -44,44 +44,27 @@ public class FatigueAlertActivity extends AppCompatActivity {
 
         int heartRate = getIntent().getIntExtra("heartRate", 0);
         String fatigueLevel = getIntent().getStringExtra("fatigueLevel");
-        String driveTime = getIntent().getStringExtra("driveTime");
 
         TextView tvAlertHR = findViewById(R.id.tvAlertHR);
         TextView tvAlertFatigue = findViewById(R.id.tvAlertFatigue);
-        TextView tvAlertDriveTime = findViewById(R.id.tvAlertDriveTime);
-        TextView tvAlertCount = findViewById(R.id.tvAlertCount);
-        TextView tvAlertDistance = findViewById(R.id.tvAlertDistance);
-        TextView tvVehicleStatus = findViewById(R.id.tvVehicleStatus);
 
         if (heartRate > 0) {
             tvAlertHR.setText(heartRate + " BPM");
         }
         if (fatigueLevel != null) {
-            tvAlertFatigue.setText(fatigueLevel);
-        }
-        if (driveTime != null) {
-            tvAlertDriveTime.setText(driveTime);
-        }
-        if (tvAlertCount != null) {
-            tvAlertCount.setText("1");
-        }
-        if (tvAlertDistance != null) {
-            tvAlertDistance.setText("-- mi");
-        }
-        if (tvVehicleStatus != null) {
-            tvVehicleStatus.setText("LIVE MONITORING");
+            tvAlertFatigue.setText(formatFatigueLevel(fatigueLevel));
         }
 
         startLoudAlarm();
         startAggressiveVibration();
 
         Button btnFindRestStop = findViewById(R.id.btnFindRestStop);
-        Button btnCallDispatch = findViewById(R.id.btnCallDispatch);
         Button btnDismiss = findViewById(R.id.btnDismissAlert);
 
         btnFindRestStop.setOnClickListener(v -> {
             stopAlarm();
             FatigueAlertNotifier.cancel(this);
+            AlertHistoryPreferences.setSuppressedAlertLevel(this, fatigueLevel);
             AlertHistoryPreferences.archiveActiveAlert(
                     this,
                     "Resolved",
@@ -93,20 +76,10 @@ public class FatigueAlertActivity extends AppCompatActivity {
             finish();
         });
 
-        btnCallDispatch.setOnClickListener(v -> {
-            stopAlarm();
-            FatigueAlertNotifier.cancel(this);
-            AlertHistoryPreferences.archiveActiveAlert(
-                    this,
-                    "Resolved",
-                    "Driver opened dispatch contact after the fatigue warning."
-            );
-            startActivity(new Intent(Intent.ACTION_DIAL));
-        });
-
         btnDismiss.setOnClickListener(v -> {
             stopAlarm();
             FatigueAlertNotifier.cancel(this);
+            AlertHistoryPreferences.setSuppressedAlertLevel(this, fatigueLevel);
             AlertHistoryPreferences.archiveActiveAlert(
                     this,
                     "Dismissed",
@@ -167,6 +140,13 @@ public class FatigueAlertActivity extends AppCompatActivity {
         if (vibrator != null) {
             vibrator.cancel();
         }
+    }
+
+    private static String formatFatigueLevel(String fatigueLevel) {
+        if ("FATIGUED".equals(fatigueLevel)) {
+            return "Fatigued";
+        }
+        return fatigueLevel;
     }
 
     @Override

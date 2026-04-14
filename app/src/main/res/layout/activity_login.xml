@@ -35,7 +35,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FleetGuard"
+            android:text="DriverGuard"
             android:textSize="24sp"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
@@ -75,7 +75,7 @@
                     android:textSize="13sp"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
-                    android:backgroundTint="#3B4A6B"
+                    android:background="@drawable/login_tab_button_active"
                     android:stateListAnimator="@null"
                     app:cornerRadius="8dp"/>
 
@@ -87,7 +87,7 @@
                     android:text="Register"
                     android:textSize="13sp"
                     android:textColor="#8896AB"
-                    android:backgroundTint="@android:color/transparent"
+                    android:background="@drawable/login_tab_button_inactive"
                     android:stateListAnimator="@null"
                     app:cornerRadius="8dp"/>
             </LinearLayout>
@@ -133,14 +133,6 @@
                     android:textColor="#C8D1DC"
                     android:layout_alignParentStart="true"/>
 
-                <TextView
-                    android:id="@+id/tvForgotPassword"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Forgot password?"
-                    android:textSize="12sp"
-                    android:textColor="#4A90D9"
-                    android:layout_alignParentEnd="true"/>
             </RelativeLayout>
 
             <!-- Password Input -->

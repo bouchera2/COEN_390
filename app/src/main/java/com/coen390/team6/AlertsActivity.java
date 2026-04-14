@@ -28,13 +28,7 @@ public class AlertsActivity extends AppCompatActivity {
     private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
-    private TextView tabActive;
-    private TextView tabHistory;
-    private View activeContent;
-    private View historyContent;
-    private View emptyActiveCard;
     private View emptyHistoryCard;
-    private LinearLayout activeListContainer;
     private LinearLayout historyListContainer;
 
     @Override
@@ -46,7 +40,6 @@ public class AlertsActivity extends AppCompatActivity {
 
         bindViews();
         bindNavigation();
-        bindTabs();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -66,13 +59,7 @@ public class AlertsActivity extends AppCompatActivity {
         navAlertsItem = findViewById(R.id.navAlertsItem);
         navLogItem = findViewById(R.id.navLogItem);
         navSettingsItem = findViewById(R.id.navSettingsItem);
-        tabActive = findViewById(R.id.tabActive);
-        tabHistory = findViewById(R.id.tabHistory);
-        activeContent = findViewById(R.id.activeContent);
-        historyContent = findViewById(R.id.historyContent);
-        emptyActiveCard = findViewById(R.id.emptyActiveCard);
         emptyHistoryCard = findViewById(R.id.emptyHistoryCard);
-        activeListContainer = findViewById(R.id.activeListContainer);
         historyListContainer = findViewById(R.id.historyListContainer);
     }
 
@@ -105,41 +92,8 @@ public class AlertsActivity extends AppCompatActivity {
         }
     }
 
-    private void bindTabs() {
-        tabActive.setOnClickListener(v -> showActiveTab());
-        tabHistory.setOnClickListener(v -> showHistoryTab());
-        showActiveTab();
-    }
-
-    private void showActiveTab() {
-        activeContent.setVisibility(View.VISIBLE);
-        historyContent.setVisibility(View.GONE);
-        tabActive.setTextColor(Color.parseColor("#135BEC"));
-        tabHistory.setTextColor(Color.parseColor("#64748B"));
-        tabActive.setBackgroundColor(Color.TRANSPARENT);
-        tabHistory.setBackgroundColor(Color.TRANSPARENT);
-    }
-
-    private void showHistoryTab() {
-        activeContent.setVisibility(View.GONE);
-        historyContent.setVisibility(View.VISIBLE);
-        tabActive.setTextColor(Color.parseColor("#64748B"));
-        tabHistory.setTextColor(Color.parseColor("#135BEC"));
-        tabActive.setBackgroundColor(Color.TRANSPARENT);
-        tabHistory.setBackgroundColor(Color.TRANSPARENT);
-    }
-
     private void renderAlerts() {
-        activeListContainer.removeAllViews();
         historyListContainer.removeAllViews();
-
-        JSONObject activeAlert = AlertHistoryPreferences.getActiveAlert(this);
-        if (activeAlert == null) {
-            emptyActiveCard.setVisibility(View.VISIBLE);
-        } else {
-            emptyActiveCard.setVisibility(View.GONE);
-            activeListContainer.addView(createAlertView(activeAlert, true));
-        }
 
         JSONArray history = AlertHistoryPreferences.getHistoryAlerts(this);
         if (history.length() == 0) {
@@ -157,7 +111,7 @@ public class AlertsActivity extends AppCompatActivity {
 
     private View createAlertView(JSONObject alert, boolean isActive) {
         View itemView = LayoutInflater.from(this)
-                .inflate(R.layout.item_alert_entry, isActive ? activeListContainer : historyListContainer, false);
+                .inflate(R.layout.item_alert_entry, historyListContainer, false);
 
         FrameLayout iconContainer = itemView.findViewById(R.id.iconContainer);
         TextView iconText = itemView.findViewById(R.id.iconText);
@@ -167,7 +121,7 @@ public class AlertsActivity extends AppCompatActivity {
         TextView messageText = itemView.findViewById(R.id.messageText);
 
         titleText.setText(alert.optString("title", "Fatigue Alert"));
-        subtitleText.setText(formatTimestamp(alert.optLong("timestampMs", System.currentTimeMillis())));
+        subtitleText.setText(formatAlertSubtitle(alert, isActive));
 
         if (isActive) {
             statusChip.setText("Active");
@@ -206,6 +160,24 @@ public class AlertsActivity extends AppCompatActivity {
     }
 
     private String formatTimestamp(long timestampMs) {
-        return new SimpleDateFormat("MMM d, HH:mm", Locale.US).format(new Date(timestampMs));
+        return new SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.US).format(new Date(timestampMs));
+    }
+
+    private String formatAlertSubtitle(JSONObject alert, boolean isActive) {
+        long triggeredAtMs = alert.optLong("timestampMs", 0L);
+        if (triggeredAtMs <= 0L) {
+            return isActive ? "ACTIVE ALERT" : "ALERT HISTORY";
+        }
+
+        String triggeredText = "Triggered " + formatTimestamp(triggeredAtMs);
+        if (isActive) {
+            return triggeredText;
+        }
+
+        long resolvedAtMs = alert.optLong("resolvedAtMs", 0L);
+        if (resolvedAtMs > 0L) {
+            return triggeredText + "  •  Resolved " + formatTimestamp(resolvedAtMs);
+        }
+        return triggeredText;
     }
 }

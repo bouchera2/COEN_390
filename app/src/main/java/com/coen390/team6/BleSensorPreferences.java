@@ -7,6 +7,7 @@ public final class BleSensorPreferences {
     private static final String PREFS_NAME = "ble_sensor_prefs";
 
     private static final String KEY_CONNECTED       = "connected";
+    private static final String KEY_CONNECTED_SINCE_MS = "connected_since_ms";
     private static final String KEY_FINGER_DETECTED = "finger_detected";
     private static final String KEY_BPM             = "bpm";
     private static final String KEY_AVG_BPM         = "avg_bpm";
@@ -29,11 +30,22 @@ public final class BleSensorPreferences {
     }
 
     public static void setConnected(Context context, boolean connected) {
-        getPrefs(context).edit().putBoolean(KEY_CONNECTED, connected).apply();
+        SharedPreferences.Editor editor = getPrefs(context).edit()
+                .putBoolean(KEY_CONNECTED, connected);
+        if (connected) {
+            editor.putLong(KEY_CONNECTED_SINCE_MS, System.currentTimeMillis());
+        } else {
+            editor.remove(KEY_CONNECTED_SINCE_MS);
+        }
+        editor.apply();
     }
 
     public static boolean isConnected(Context context) {
         return getPrefs(context).getBoolean(KEY_CONNECTED, false);
+    }
+
+    public static long getConnectedSinceMs(Context context) {
+        return getPrefs(context).getLong(KEY_CONNECTED_SINCE_MS, 0L);
     }
 
     public static void saveSensorData(Context context, BleSensorData data) {

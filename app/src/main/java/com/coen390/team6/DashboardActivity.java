@@ -35,10 +35,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class DashboardActivity extends AppCompatActivity {
-    private static final int FATIGUE_ALERT_THRESHOLD = 85;
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 3902;
 
-    private TextView heartRateText, fatigueText, bluetoothText, batteryText;
+    private TextView heartRateText, fatigueText, bluetoothText;
     private TextView fatigueLabelText;
     private TextView fatigueDescriptionText;
     private TextView fatigueGaugeIcon;
@@ -49,14 +48,12 @@ public class DashboardActivity extends AppCompatActivity {
     private ProgressBar drivingTimeProgress;
     private ImageView routeSnapshotImage;
     private View[] heartRateBars;
-    private View batteryChip;
     private View bluetoothStatusChip;
     private View bluetoothStatusDot;
     private View navDashboardItem;
     private View navAlertsItem;
     private View navLogItem;
     private View navSettingsItem;
-    private boolean fatigueAlertShown;
     private final Handler sensorRefreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable sensorRefreshRunnable = new Runnable() {
         @Override
@@ -91,7 +88,6 @@ public class DashboardActivity extends AppCompatActivity {
         heartRateText = findViewById(R.id.heartRateText);
         fatigueText = findViewById(R.id.fatigueText);
         bluetoothText = findViewById(R.id.bluetoothText);
-        batteryText = findViewById(R.id.batteryText);
         fatigueLabelText = findViewById(R.id.fatigueLabelText);
         fatigueDescriptionText = findViewById(R.id.fatigueDescriptionText);
         fatigueGaugeIcon = findViewById(R.id.fatigueGaugeIcon);
@@ -101,7 +97,6 @@ public class DashboardActivity extends AppCompatActivity {
         drivingTimeProgress = findViewById(R.id.drivingTimeProgress);
         routeSnapshotImage = findViewById(R.id.routeSnapshotImage);
         dashboardToolbar = findViewById(R.id.dashboardToolbar);
-        batteryChip = findViewById(R.id.batteryChip);
         bluetoothStatusChip = findViewById(R.id.bluetoothStatusChip);
         bluetoothStatusDot = findViewById(R.id.bluetoothStatusDot);
         navDashboardItem = findViewById(R.id.navDashboardItem);
@@ -183,6 +178,7 @@ public class DashboardActivity extends AppCompatActivity {
         float bpm = BleSensorPreferences.getBpm(this);
         DetailedAnalysisActivity.FatigueSnapshot fatigueStatus =
                 DetailedAnalysisActivity.getFatigueSnapshot(this);
+        String driverState = BleSensorPreferences.getDriverState(this);
         boolean fingerDetected = BleSensorPreferences.isFingerDetected(this);
 
         if (heartRateText != null) {
@@ -199,12 +195,6 @@ public class DashboardActivity extends AppCompatActivity {
             bluetoothStatusDot.setBackgroundResource(isConnected
                     ? android.R.drawable.presence_online
                     : android.R.drawable.presence_busy);
-        }
-        if (batteryChip != null) {
-            batteryChip.setVisibility(isConnected ? View.VISIBLE : View.GONE);
-        }
-        if (batteryText != null) {
-            updateBatteryEstimate();
         }
         if (fatigueText != null) {
             fatigueText.setText(fatigueStatus.getScore() + "%");
@@ -228,7 +218,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         updateHeartRateBars(fingerDetected, avgBpm, bpm);
         updateDrivingTimeCard();
-        checkFatigueAndAlert(avgBpm > 0 ? avgBpm : Math.round(bpm), fatigueStatus.getScore());
     }
 
     private String formatHeartRate(boolean fingerDetected, int avgBpm, float bpm) {
@@ -307,22 +296,6 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
-    private void updateBatteryEstimate() {
-        if (batteryText == null) {
-            return;
-        }
-
-        if (!DrivingSessionPreferences.isActive(this)) {
-            batteryText.setText(getString(R.string.battery_value_unavailable));
-            batteryText.setTextColor(Color.parseColor("#CBD5E1"));
-            return;
-        }
-
-        long driveMinutes = getDriveTimeMinutes();
-        batteryText.setText(BatteryEstimator.getBatteryBars(driveMinutes));
-        batteryText.setTextColor(Color.parseColor(BatteryEstimator.getBatteryColor(driveMinutes)));
-    }
-
     private long getDriveTimeMinutes() {
         if (!DrivingSessionPreferences.isActive(this)) {
             return 0L;
@@ -331,50 +304,6 @@ public class DashboardActivity extends AppCompatActivity {
         long startedAtMs = DrivingSessionPreferences.getStartedAtMs(this);
         long elapsedMs = Math.max(0L, System.currentTimeMillis() - startedAtMs);
         return elapsedMs / 60000L;
-    }
-
-    private void checkFatigueAndAlert(int currentHr, int fatigueScore) {
-        if (fatigueScore < FATIGUE_ALERT_THRESHOLD) {
-            fatigueAlertShown = false;
-            return;
-        }
-
-        if (fatigueAlertShown) {
-            return;
-        }
-
-        fatigueAlertShown = true;
-        long driveMinutes = getDriveTimeMinutes();
-        long hours = driveMinutes / 60L;
-        long minutes = driveMinutes % 60L;
-        String driveTime = String.format(java.util.Locale.US, "%dh %02dm", hours, minutes);
-        long timestampMs = System.currentTimeMillis();
-        String alertMessage = "Critical fatigue detected. Immediate rest is recommended for driver safety.";
-
-        AlertHistoryPreferences.saveActiveAlert(
-                this,
-                "High Fatigue Risk",
-                alertMessage,
-                fatigueScore,
-                currentHr,
-                timestampMs
-        );
-
-        FatigueAlertNotifier.showFatigueAlert(
-                this,
-                currentHr,
-                "HIGH",
-                driveTime,
-                driveMinutes
-        );
-
-        Intent alertIntent = new Intent(this, FatigueAlertActivity.class);
-        alertIntent.putExtra("heartRate", currentHr);
-        alertIntent.putExtra("fatigueLevel", "HIGH");
-        alertIntent.putExtra("driveTime", driveTime);
-        alertIntent.putExtra("driveTimeMinutes", driveMinutes);
-        alertIntent.putExtra("fatigueScore", fatigueScore);
-        startActivity(alertIntent);
     }
 
     private void ensureNotificationPermission() {

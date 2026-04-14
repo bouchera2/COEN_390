@@ -152,18 +152,19 @@
                         android:id="@+id/tvDeviceName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="esp32_bracelet_test"
+                        android:text="DriverGuard_bracelet"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvSignalStrength"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📶 Strong signal"
+                        android:text="Strong signal"
                         android:textColor="#4ADE80"
                         android:textSize="12sp" />
+
                 </LinearLayout>
 
                 <Button
@@ -211,20 +212,16 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
         <Button
             android:id="@+id/btn_dashboard"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="8dp"
             android:backgroundTint="#2563EB"
-            android:text="Go to Dashboard"
+            android:text="Go to Maps"
             android:textColor="#FFFFFF"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -235,34 +232,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="20dp"
             android:backgroundTint="@android:color/transparent"
             android:text="↻  Refresh Device List"
             android:textColor="#2563EB"
             android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20dp"
-            android:gravity="center"
-            android:text="Don't see your device? Make sure Bluetooth is&#10;enabled on your phone."
-            android:textColor="#64748B"
-            android:textSize="11sp" />
-
-        <Button
-            android:id="@+id/btn_disconnect"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:backgroundTint="#1E293B"
-            android:text="Sign Out"
-            android:textColor="#EF4444"
-            android:textSize="14sp"
-            app:cornerRadius="10dp" />
 
     </LinearLayout>
 </ScrollView>

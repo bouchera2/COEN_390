@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F6F8">
+    android:background="#0A0C10">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,14 +26,14 @@
                 android:text="←"
                 android:textSize="20sp"
                 android:backgroundTint="@android:color/transparent"
-                android:textColor="#1F2937" />
+                android:textColor="#F8FAFC" />
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Driver Analysis"
-                android:textColor="#0F172A"
+                android:textColor="#F8FAFC"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
@@ -63,9 +63,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="#121826"
             app:cardCornerRadius="14dp"
-            app:strokeColor="#E2E8F0"
+            app:strokeColor="#1E293B"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -112,9 +112,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="#121826"
             app:cardCornerRadius="14dp"
-            app:strokeColor="#E2E8F0"
+            app:strokeColor="#1E293B"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -159,7 +159,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0 = alert  •  100 = drowsy"
+                            android:text="0 = alert  •  100 = fatigued"
                             android:textColor="#94A3B8"
                             android:textSize="12sp"
                             android:layout_marginTop="2dp"/>
@@ -187,16 +187,16 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="🟢 0–30 Normal"
-                        android:textColor="#64748B"
+                        android:text="🟢 0–30 Relaxed"
+                        android:textColor="#94A3B8"
                         android:textSize="11sp"/>
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="🟠 30–60 Fatigued"
-                        android:textColor="#64748B"
+                        android:text="🟠 30–60 Normal"
+                        android:textColor="#94A3B8"
                         android:textSize="11sp"
                         android:gravity="center"/>
 
@@ -204,8 +204,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="🔴 60–100 Drowsy"
-                        android:textColor="#64748B"
+                        android:text="🔴 60–100 Fatigued"
+                        android:textColor="#94A3B8"
                         android:textSize="11sp"
                         android:gravity="end"/>
                 </LinearLayout>
@@ -230,9 +230,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="#121826"
             app:cardCornerRadius="14dp"
-            app:strokeColor="#E2E8F0"
+            app:strokeColor="#1E293B"
             app:strokeWidth="1dp">
 
             <com.coen390.team6.FatigueChartView
@@ -260,9 +260,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="#121826"
             app:cardCornerRadius="14dp"
-            app:strokeColor="#E2E8F0"
+            app:strokeColor="#1E293B"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -280,7 +280,7 @@
                         android:textColor="#64748B" android:textSize="14sp"/>
                     <TextView android:id="@+id/tvLiveFinger"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="--" android:textColor="#0F172A"
+                        android:text="--" android:textColor="#F8FAFC"
                         android:textSize="14sp" android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -293,12 +293,12 @@
                         android:textColor="#64748B" android:textSize="14sp"/>
                     <TextView android:id="@+id/tvLiveBpm"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="--" android:textColor="#0F172A"
+                        android:text="--" android:textColor="#F8FAFC"
                         android:textSize="14sp" android:textStyle="bold"/>
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="#E2E8F0" android:layout_marginBottom="12dp"/>
+                    android:background="#1E293B" android:layout_marginBottom="12dp"/>
 
                 <!-- Sudden Movement -->
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -309,7 +309,7 @@
                         android:textColor="#64748B" android:textSize="14sp"/>
                     <TextView android:id="@+id/tvLiveSudden"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="--" android:textColor="#0F172A"
+                        android:text="--" android:textColor="#F8FAFC"
                         android:textSize="14sp" android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -321,7 +321,7 @@
                         android:textColor="#64748B" android:textSize="14sp"/>
                     <TextView android:id="@+id/tvLiveCrash"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="--" android:textColor="#0F172A"
+                        android:text="--" android:textColor="#F8FAFC"
                         android:textSize="14sp" android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -345,9 +345,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="#121826"
             app:cardCornerRadius="14dp"
-            app:strokeColor="#E2E8F0"
+            app:strokeColor="#1E293B"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -374,7 +374,7 @@
                         android:textColor="#64748B" android:textSize="14sp"/>
                     <TextView android:id="@+id/tvAvgBpm"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="--" android:textColor="#0F172A"
+                        android:text="--" android:textColor="#F8FAFC"
                         android:textSize="14sp" android:textStyle="bold"/>
                 </LinearLayout>
 

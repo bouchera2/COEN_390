@@ -27,6 +27,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+    public static final String EXTRA_SKIP_AUTO_REDIRECT = "skip_auto_redirect";
 
     private EditText editTextEmail, editTextPassword;
     private Button buttonLogin, buttonSignUp, buttonGoogleSignIn;
@@ -88,9 +89,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void switchToSignIn() {
         isSignInMode = true;
-        tabSignIn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF3B4A6B));
+        tabSignIn.setBackgroundResource(R.drawable.login_tab_button_active);
         tabSignIn.setTextColor(0xFFFFFFFF);
-        tabRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0x00000000));
+        tabRegister.setBackgroundResource(R.drawable.login_tab_button_inactive);
         tabRegister.setTextColor(0xFF8896AB);
         buttonLogin.setVisibility(View.VISIBLE);
         buttonSignUp.setVisibility(View.GONE);
@@ -98,9 +99,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void switchToRegister() {
         isSignInMode = false;
-        tabRegister.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF3B4A6B));
+        tabRegister.setBackgroundResource(R.drawable.login_tab_button_active);
         tabRegister.setTextColor(0xFFFFFFFF);
-        tabSignIn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0x00000000));
+        tabSignIn.setBackgroundResource(R.drawable.login_tab_button_inactive);
         tabSignIn.setTextColor(0xFF8896AB);
         buttonLogin.setVisibility(View.GONE);
         buttonSignUp.setVisibility(View.VISIBLE);
@@ -109,6 +110,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        if (getIntent().getBooleanExtra(EXTRA_SKIP_AUTO_REDIRECT, false)) {
+            getIntent().removeExtra(EXTRA_SKIP_AUTO_REDIRECT);
+            return;
+        }
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             goToMain();

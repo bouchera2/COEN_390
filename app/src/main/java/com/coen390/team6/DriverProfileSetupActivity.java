@@ -32,8 +32,12 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_driver_profile_setup);
 
         db = FirebaseFirestore.getInstance();
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         isEditMode = getIntent().getBooleanExtra(EXTRA_EDIT_MODE, false);
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            navigateBack();
+            return;
+        }
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         etFullName = findViewById(R.id.etFullName);
         etAge = findViewById(R.id.etAge);
@@ -50,7 +54,7 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSaveProfile);
         Button btnSkip = findViewById(R.id.btnSkip);
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> navigateBack());
 
         if (isEditMode) {
             tvTitle.setText("Edit Personal Information");
@@ -250,6 +254,24 @@ public class DriverProfileSetupActivity extends AppCompatActivity {
             return String.valueOf((long) value);
         }
         return String.valueOf(value);
+    }
+
+    @Override
+    public void onBackPressed() {
+        navigateBack();
+    }
+
+    private void navigateBack() {
+        if (isEditMode) {
+            finish();
+            return;
+        }
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra(LoginActivity.EXTRA_SKIP_AUTO_REDIRECT, true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void goToMain() {

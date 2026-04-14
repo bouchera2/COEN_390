@@ -28,8 +28,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.UUID;
@@ -109,17 +107,6 @@ public class MainActivity extends AppCompatActivity {
         btnDashboard.setOnClickListener(v ->
                 startActivity(new Intent(MainActivity.this, GpsNavigationActivity.class)));
 
-        // Disconnect button → sign out and go to Login
-        Button btnDisconnect = findViewById(R.id.btn_disconnect);
-        btnDisconnect.setOnClickListener(v -> {
-            shouldReconnect = false;
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
-
         btnScanConnect = findViewById(R.id.btnScan);
         btnRefresh = findViewById(R.id.btnRefresh);
         tvStatus = findViewById(R.id.tvStatus);
@@ -147,10 +134,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-        if (checkPermissions()) startScanAndConnect();
-    }
-
     private void startScanAndConnect() {
+        if (isDeviceConnected()) {
+            updateStatus("Status: Already connected", android.R.color.holo_green_dark);
+            updateScanStatus("Device already connected");
+            return;
+        }
+
         if (bluetoothAdapter == null) {
             updateStatus("Status: Bluetooth unavailable", android.R.color.holo_red_dark);
             updateScanStatus("Bluetooth unavailable");
@@ -200,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        closeCurrentGatt();
         updateStatus("Connecting...", android.R.color.holo_orange_dark);
 
         bluetoothGatt = esp32Device.connectGatt(this, false, new BluetoothGattCallback() {
@@ -209,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 if (newState == android.bluetooth.BluetoothProfile.STATE_CONNECTED) {
                     Log.d(TAG, "Connected to ESP32");
                     reconnectDelay = 2000;
+                    bluetoothGatt = gatt;
                     BleSensorPreferences.setConnected(MainActivity.this, true);
 
                     runOnUiThread(() -> {
@@ -221,6 +213,9 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (newState == android.bluetooth.BluetoothProfile.STATE_DISCONNECTED) {
                     Log.d(TAG, "Disconnected from ESP32");
+                    if (bluetoothGatt == gatt) {
+                        closeCurrentGatt();
+                    }
                     BleSensorPreferences.setConnected(MainActivity.this, false);
 
                     runOnUiThread(() -> {
@@ -288,61 +283,27 @@ public class MainActivity extends AppCompatActivity {
                 // 1. Parse raw Arduino packet
                 BleSensorData raw = BleSensorData.fromPayload(value);
 
-                // 2. Reclassify driverState with app-side thresholds
-                boolean baselineReady = raw.getGsrBaseline() > 0.01f;
-                String appState = ThresholdPreferences.classifyDriverState(
-                        MainActivity.this,
-                        raw.getAvgBpm(),
-                        raw.getGsrFiltered(),
-                        raw.getGsrBaseline(),
-                        baselineReady
-                );
+                // 2. Use the device-reported driverState directly
+                BleSensorData sensorData = raw;
 
-                // 3. Override driverState with app classification
-                BleSensorData sensorData = raw.withDriverState(appState);
-
-                // 4. Save to SharedPrefs + Firestore
+                // 3. Save to SharedPrefs + Firestore
                 BleSensorPreferences.saveSensorData(MainActivity.this, sensorData);
                 firestoreRepository.saveSensorReading(sensorData);
+                int fatigueScore = Math.round(DetailedAnalysisActivity.computeFatigueScore(
+                        sensorData.getAvgBpm() > 0 ? sensorData.getAvgBpm() : Math.round(sensorData.getBpm()),
+                        sensorData.getGsrFiltered(),
+                        sensorData.getGsrBaseline()
+                ));
+                DriverAlertManager.evaluateAndNotify(
+                        MainActivity.this,
+                        sensorData.getAvgBpm() > 0 ? sensorData.getAvgBpm() : Math.round(sensorData.getBpm()),
+                        fatigueScore,
+                        sensorData.getDriverState()
+                );
 
-                Log.d(TAG, "Value received: " + value + " → state=" + appState);
+                Log.d(TAG, "Value received: " + value + " → state=" + sensorData.getDriverState());
             }
         });
-    }
-
-    // Scanning
-
-    private void startScanAndConnect() {
-        if (bluetoothAdapter == null) {
-            updateStatus("Bluetooth unavailable", android.R.color.holo_red_dark);
-            return;
-        }
-        if (!bluetoothAdapter.isEnabled()) bluetoothAdapter.enable();
-
-        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
-        if (scanner == null) {
-            updateStatus("BLE scanner unavailable", android.R.color.holo_red_dark);
-            return;
-        }
-        if (isScanning) stopBleScan();
-
-        updateStatus("Scanning...", android.R.color.holo_orange_dark);
-        isScanning = true;
-
-        ScanFilter filter = new ScanFilter.Builder()
-                .setServiceUuid(new ParcelUuid(SERVICE_UUID))
-                .build();
-        ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .build();
-        scanner.startScan(Collections.singletonList(filter), settings, scanCallback);
-
-        scanHandler.postDelayed(() -> {
-            if (isScanning) {
-                stopBleScan();
-                updateStatus("Device not found", android.R.color.holo_red_dark);
-            }
-        }, 10000);
     }
 
     private void stopBleScan() {
@@ -351,6 +312,25 @@ public class MainActivity extends AppCompatActivity {
         if (scanner != null) scanner.stopScan(scanCallback);
         scanHandler.removeCallbacksAndMessages(null);
         isScanning = false;
+    }
+
+    private boolean isDeviceConnected() {
+        return bluetoothGatt != null && BleSensorPreferences.isConnected(this);
+    }
+
+    private void closeCurrentGatt() {
+        if (bluetoothGatt == null) {
+            return;
+        }
+        try {
+            bluetoothGatt.disconnect();
+        } catch (Exception ignored) {
+        }
+        try {
+            bluetoothGatt.close();
+        } catch (Exception ignored) {
+        }
+        bluetoothGatt = null;
     }
 
     private void reconnectDevice() {
@@ -388,18 +368,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void openGpsHome() {
-        if (hasOpenedGps) {
-            return;
+    private boolean checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            String[] permissions = new String[] {
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT
+            };
+            boolean missingPermission = false;
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(this, permission)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    missingPermission = true;
+                    break;
+                }
+            }
+            if (missingPermission) {
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+                return false;
+            }
+            return true;
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSION_REQUEST_CODE);
             return false;
         }
         return true;
+    }
+
+    private void openGpsHome() {
+        if (hasOpenedDashboard) {
+            return;
+        }
+        hasOpenedDashboard = true;
+        startActivity(new Intent(MainActivity.this, GpsNavigationActivity.class));
     }
 
     @Override
@@ -430,10 +435,7 @@ public class MainActivity extends AppCompatActivity {
         shouldReconnect = false;
         stopBleScan();
         reconnectHandler.removeCallbacksAndMessages(null);
-        if (bluetoothGatt != null) {
-            bluetoothGatt.close();
-            bluetoothGatt = null;
-        }
+        closeCurrentGatt();
         super.onDestroy();
     }
 }
