@@ -27,6 +27,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+    public static final String EXTRA_SKIP_AUTO_REDIRECT = "skip_auto_redirect";
 
     private EditText editTextEmail, editTextPassword;
     private Button buttonLogin, buttonSignUp, buttonGoogleSignIn;
@@ -109,6 +110,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        if (getIntent().getBooleanExtra(EXTRA_SKIP_AUTO_REDIRECT, false)) {
+            getIntent().removeExtra(EXTRA_SKIP_AUTO_REDIRECT);
+            return;
+        }
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             goToMain();
