@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -89,7 +90,7 @@ public class GpsNavigationActivity extends AppCompatActivity implements OnMapRea
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemePreferenceManager.applySavedNightMode(this);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gps_navigation);
 
